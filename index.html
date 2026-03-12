@@ -1,738 +1,1884 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>TERA Gear Bonus Checker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Old School TERA – PvE Progression Guide</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --tera-bg: #050810;
-    --tera-panel: #101827;
-    --tera-accent: #3aa2ff;
-    --tera-accent-soft: #234567;
-    --attack-defense-label: #4aa8ff;
-    --bonus-label: #4bff9c;
-    --tera-yellow: #ffd700;
-    --text-main: #e5f0ff;
-    --text-muted: #8aa0c5;
-    --border-soft: #25324a;
-    --red: #ff4b4b;
-    --orange: #ffb347;
-    --green: #3bff6a;
-    --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.65);
-  }
 
-  * {
-    box-sizing: border-box;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
+/* ==================================================
+   BASE
+================================================== */
 
-  body {
-    margin: 0;
-    padding: 16px;
-    min-height: 100vh;
-    background: radial-gradient(circle at top, #1a2340 0, #050810 55%);
-    color: var(--text-main);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  .app {
-    width: 100%;
-    max-width: 900px;
-    background: linear-gradient(145deg, #101827, #060914);
-    border-radius: 14px;
-    border: 1px solid var(--border-soft);
-    box-shadow: var(--shadow-soft);
-    padding: 18px 16px 20px;
-  }
-
-  .app-header {
-    margin-bottom: 14px;
-  }
-
-  .app-title {
-    font-size: 1.1rem;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--tera-accent);
-    text-align: center;
-  }
-
-  .collapsible {
-    margin-bottom: 12px;
-  }
-
-  .collapsible-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    background: rgba(27, 39, 68, 0.5);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.2s ease;
-  }
-
-  .collapsible-header:hover {
-    background: rgba(27, 39, 68, 0.7);
-  }
-
-  .collapsible-icon {
-    font-size: 0.8rem;
-    transition: transform 0.2s ease;
-  }
-
-  .collapsible-icon.open {
-    transform: rotate(90deg);
-  }
-
-  .collapsible-title {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--tera-accent);
-  }
-
-  .collapsible-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-
-  .collapsible-content.open {
-    max-height: 1000px;
-  }
-
-  .collapsible-body {
-    padding: 12px;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--text-muted);
-  }
-
-  .collapsible-body h4 {
-    margin: 12px 0 6px 0;
-    font-size: 0.9rem;
-    color: var(--text-main);
-  }
-
-  .collapsible-body p {
-    margin: 6px 0;
-  }
-
-  .collapsible-body code {
-    background: rgba(3, 8, 15, 0.6);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-    color: var(--bonus-label);
-  }
-
-  .collapsible-body .credit {
-    margin-top: 8px;
-    font-style: italic;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .calc-card {
-    padding: 12px 10px 12px;
-    border-radius: 10px;
-    background: radial-gradient(circle at top left, #1b2744 0, #060914 60%);
-    border: 1px solid #1a2436;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  .calc-card.roll-1 {
-    border-color: var(--red);
-    box-shadow: 0 0 10px rgba(255, 75, 75, 0.25);
-  }
-
-  .calc-card.roll-2 {
-    border-color: var(--orange);
-    box-shadow: 0 0 10px rgba(255, 179, 71, 0.25);
-  }
-
-  .calc-card.roll-3 {
-    border-color: var(--green);
-    box-shadow: 0 0 12px rgba(59, 255, 106, 0.35);
-  }
-
-  .calc-title-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .calc-title {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .form-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-.formula-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(86, 99, 124, 0.9);
-  background: rgba(8, 12, 22, 0.95);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #c084fc; /* purple label */
-  margin-right: 4px;
+html{
+  scroll-behavior:smooth;
 }
 
-.formula-inline code {
-  background: transparent;
-  padding: 0;
-  color: var(--text-muted);
+body{
+  background:#0b0c10;
+  color:#d8d8d8;
+  font-family:'Open Sans',sans-serif;
+  margin:0;
 }
 
-  .field {
-    flex: 0 0 31%;
-    display: flex;
-    flex-direction: column;
-  }
+section{
+  margin-bottom:60px;
+}
 
-  .field-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
-  }
+ul{
+  padding-left:20px;
+}
 
-  .field-label.enchant {
-    color: var(--tera-yellow);
-  }
 
-  .field-label.modifier {
-    color: var(--attack-defense-label);
-  }
+/* ==================================================
+   HEADER
+================================================== */
 
-  .field-label.bonus {
-    color: var(--bonus-label);
-  }
+header{
+  background:linear-gradient(180deg,#111,#0b0c10);
+  border-bottom:1px solid #333;
+  padding:40px 20px;
+  text-align:center;
+}
 
-  .field input,
-  .field select {
-    width: 100%;
-    padding: 7px 8px;
-    border-radius: 7px;
-    border: 1px solid var(--border-soft);
-    background: rgba(3, 8, 15, 0.9);
-    color: var(--text-main);
-    font-size: 0.86rem;
-    outline: none;
-  }
+header h1{
+  color:#d4af37;
+  font-family:'Cinzel',serif;
+  font-size:40px;
+  letter-spacing:2px;
+  margin:0;
+}
 
-  .field input.base-input {
-    color: var(--attack-defense-label) !important;
-  }
+header p.subtitle{
+  color:#d4af37;
+  font-family:'Cinzel',serif;
+  font-size:35px;
+  letter-spacing:2px;
+  margin:10px;
+}
 
-  .field input.bonus-input {
-    color: var(--bonus-label) !important;
-  }
 
-  .field select.enchant-input {
-    color: var(--tera-yellow);
-    background-color: rgba(3, 8, 15, 0.9);
-    border: 1px solid var(--border-soft);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
+/* ==================================================
+   LAYOUT
+================================================== */
 
-  .field select.enchant-input option {
-    color: var(--tera-yellow);
-    background-color: #050810;
-  }
+.container{
+  margin:auto;
+  max-width:1100px;
+  padding:40px 20px;
+}
 
-  .field select.enchant-input option[value=""] {
-    color: var(--text-muted);
-  }
+.dungeon_gallery{
+  display:grid;
+  gap:10px;
+  grid-template-columns:repeat(3,1fr);
+  margin-bottom:10px;
+}
 
-  .field input:focus,
-  .field select:focus {
-    border-color: var(--tera-accent);
-    box-shadow: 0 0 0 1px rgba(40, 138, 255, 0.35);
-  }
 
-  .result-row {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 8px;
-    margin-top: 4px;
-  }
+/* ==================================================
+   TYPOGRAPHY
+================================================== */
 
-  .result-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
+h2{
+  border-bottom:1px solid #333;
+  color:#d4af37;
+  font-family:'Cinzel',serif;
+  margin-bottom:25px;
+  padding-bottom:10px;
+  font-size:35px;
+}
 
-  .result-chip {
-    min-width: 60px;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border: 1px solid transparent;
-  }
+h3{
+  color:#e5c76b;
+  margin-top:15px;
+}
 
-  .result-chip.red {
-    color: var(--red);
-    border-color: rgba(255, 75, 75, 0.7);
-    background: rgba(40, 5, 5, 0.8);
-  }
+h4{
+  color:#e5966b;
+  margin-top:15px;
+}
 
-  .result-chip.orange {
-    color: var(--orange);
-    border-color: rgba(255, 179, 71, 0.7);
-    background: rgba(40, 26, 5, 0.8);
-  }
 
-  .result-chip.green {
-    color: var(--green);
-    border-color: rgba(59, 255, 106, 0.7);
-    background: rgba(6, 36, 16, 0.85);
-  }
+/* ==================================================
+   CARDS / PANELS
+================================================== */
 
-  .result-chip.neutral {
-    color: var(--text-muted);
-    border-color: rgba(86, 99, 124, 0.8);
-    background: rgba(8, 12, 22, 0.85);
-  }
+.card{
+  background:#121317;
+  border:1px solid #2a2c33;
+  border-radius:6px;
+  box-shadow:0 0 8px rgba(0,0,0,0.6);
+  margin-bottom:20px;
+  padding:20px;
+}
 
-  @media (max-width: 768px) {
-    .app {
-      max-width: 520px;
-    }
-    .grid {
-      grid-template-columns: 1fr;
-    }
-  }
+.dungeon{
+  background:#14161c;
+  border:1px solid #2e313a;
+  border-radius:6px;
+  margin-bottom:20px;
+  padding:18px;
+}
 
-  @media (max-width: 520px) {
-    .calc-card .form-row {
-      flex-direction: column;
-    }
-    .calc-card .field {
-      flex: 1 0 100%;
-    }
-  }
+.dungeon strong{
+  color:#fff;
+}
+
+
+/* ==================================================
+   CALLOUTS
+================================================== */
+
+.tip,
+.goal,
+.warning{
+  background:#111;
+  margin:20px 0;
+  padding:15px;
+}
+
+.tip{ border-left:4px solid #4caf50; }
+.goal{ border-left:4px solid #fa003f; }
+.warning{ border-left:4px solid #d4af37; }
+
+
+/* ==================================================
+   ICONS
+================================================== */
+
+.icon{
+  border-radius:3px;
+  height:22px;
+  margin-right:6px;
+  transition:transform .15s ease,box-shadow .15s ease;
+  vertical-align:middle;
+  width:22px;
+}
+
+.icon:hover{
+  box-shadow:0 0 6px rgba(212,175,55,0.8);
+  transform:scale(1.4);
+  z-index:2;
+}
+
+
+/* ==================================================
+   DUNGEON IMAGES
+================================================== */
+
+.dungeon_pic{
+  border:1px solid #333;
+  border-radius:6px;
+  box-shadow:0 0 10px rgba(0,0,0,0.6);
+  height:180px;
+  object-fit:cover;
+  transition:transform .25s ease,box-shadow .25s ease;
+  width:100%;
+}
+
+.dungeon_pic:hover{
+  box-shadow:0 0 15px rgba(0,0,0,0.9);
+  transform:scale(1.35);
+  z-index:5;
+}
+
+
+/* ==================================================
+   LISTS
+================================================== */
+
+.reward-list li{ margin-bottom:6px; }
+
+.glossary-item{ margin-bottom:12px; }
+
+.progression-list{
+  list-style:none;
+  margin:10px 0 0;
+  padding-left:0;
+}
+
+.progression-list li{
+  margin-bottom:6px;
+}
+
+.progression-list img{
+  display:block;
+  height:auto;
+  margin:0 auto 6px;
+  max-width:100%;
+}
+
+
+/* ==================================================
+   TABLES
+================================================== */
+
+.roadmap-table,
+.vm-table{
+  border-collapse:collapse;
+  margin-top:20px;
+  width:100%;
+}
+
+.roadmap-table th,
+.vm-table th,
+.roadmap-table td,
+.vm-table td{
+  border:1px solid #2a2c33;
+  padding:12px 10px;
+}
+
+.roadmap-table th,
+.vm-table th{
+  background:linear-gradient(180deg,#111,#0b0c10);
+  color:#d4af37;
+  font-family:'Cinzel',serif;
+}
+
+.roadmap-table td,
+.vm-table td{
+  background:#121317;
+  color:#d8d8d8;
+}
+
+.vm-table td:first-child{
+  text-align:left;
+}
+
+.roadmap-table th,
+.roadmap-table td,
+.vm-table th,
+.vm-table td{
+  vertical-align:top;
+}
+
+
+/* ==================================================
+   TABLE OF CONTENTS
+================================================== */
+
+.toc-grid{
+  display:grid;
+  gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+
+@media (max-width:700px){
+  .toc-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+.toc-button{
+  background:radial-gradient(circle at top left,#2e3440,#151821);
+  border:1px solid #444;
+  border-radius:6px;
+  box-shadow:0 0 6px rgba(0,0,0,0.6);
+  color:#e5e5e5;
+  display:block;
+  font-size:.9rem;
+  letter-spacing:.03em;
+  padding:10px 14px;
+  text-decoration:none;
+  text-transform:uppercase;
+  transition:all .15s ease;
+}
+
+.toc-button strong{
+  color:#d4af37;
+}
+
+.toc-button:hover{
+  background:radial-gradient(circle at top left,#3b4252,#191c26);
+  border-color:#d4af37;
+  box-shadow:0 0 10px rgba(212,175,55,0.6);
+  transform:translateY(-1px);
+}
+
+
+/* ==================================================
+   DIFFICULTY STARS
+================================================== */
+
+.difficulty{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  font-size:1rem;
+}
+
+.difficulty .star{
+  color:#f1c40f;
+  font-size:1.1rem;
+}
+
+.difficulty .star.empty{
+  color:#555;
+}
+
+.item-level{
+  color:#5dade2;
+  font-weight:600;
+  margin-left:6px;
+}
+
+
+/* ==================================================
+   TOOLTIP SYSTEM (VISIONMAKER TABLE)
+================================================== */
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.item img{
+  width:32px;
+  height:32px;
+  border:1px solid #555;
+  border-radius:4px;
+}
+
+.tooltip{
+  position:fixed;
+  display:none;
+  background:#1a1a1a;
+  border:2px solid #666;
+  border-radius:6px;
+  padding:12px;
+  box-shadow:0 0 12px black;
+  z-index:999;
+  pointer-events:none;
+  max-width:600px;
+}
+
+.tooltip img{
+  width:42px;
+  height:42px;
+  margin-bottom:6px;
+}
+
+.tooltip-title{
+  font-weight:bold;
+  color:white;
+  margin-bottom:6px;
+}
+
+.tooltip-desc{
+  color:#4da6ff;
+  margin-bottom:10px;
+}
+
+.tooltip-header{
+  font-weight:bold;
+  margin-top:6px;
+}
+
+.tooltip-entry{
+  color:#bbb;
+  margin-left:6px;
+  margin-bottom:2px;
+}
+
+
+/* ==================================================
+   CLASS SETS (VISIONMAKER)
+================================================== */
+
+.class-set{
+  margin-bottom:14px;
+  border-radius:6px;
+  border:1px solid #2a2c33;
+  background:#111;
+  overflow:hidden;
+}
+
+.class-set summary{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:18px;
+  letter-spacing:.4px;
+}
+
+.class-set summary:hover{
+  background:#1b1d24;
+}
+
+.class-icon{
+  width:30px;
+  height:30px;
+}
+
+
+/* ==================================================
+   ROLE COLORS
+================================================== */
+
+.role-heal{ border-left:4px solid #3bbf6b; }
+.role-tank{ border-left:4px solid #3b7ddb; }
+.role-dps{ border-left:4px solid #d94b4b; }
+.role-hybrid{ border-left:4px solid #9b59b6; }
+
+.role-heal summary{ color:#6df7a0; }
+.role-tank summary{ color:#82b8ff; }
+.role-dps summary{ color:#ff8e8e; }
+.role-hybrid summary{ color:#d299f7; }
+
+
+/* ==================================================
+   GEAR GRID
+================================================== */
+
+.gear-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
+  align-items:start;
+  padding:10px;
+}
+
+.gear-grid > div{
+  text-align:center;
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gear-title{
+  font-weight:bold;
+  font-size:1.1rem;
+  color:#d4af37;
+  margin-bottom:8px;
+  font-family:'Cinzel',serif;
+}
+
+.gear-grid img{
+  width:100%;
+  height:auto;
+  display:block;
+  border:2px solid transparent;
+  border-radius:6px;
+  cursor:pointer;
+  transition:transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gear-grid img:hover{
+  transform:scale(1.05);
+  border:2px solid #d4af37;
+  box-shadow:0 8px 20px rgba(0,0,0,0.5);
+}
+
+
+/* ==================================================
+   FOOTER / BANNERS
+================================================== */
+
+footer{
+  border-top:1px solid #333;
+  color:#777;
+  padding:30px;
+  text-align:center;
+}
+
+.banner-img{
+  display:block;
+  margin:0 auto;
+  max-width:100%;
+}
+
 </style>
 </head>
+
 <body>
-<div class="app">
-  <div class="app-header">
-    <div class="app-title">TERA Gear Bonus Checker (Patch 31.04)</div>
+<header>
+  <h1>Old School TERA Online (OSTO)</h1>
+  <p class="subtitle">PvE Progression Guide</p>
+</header>
+<div class="container">
+
+<section><center>
+
+  <div class="card">
+    <h2>Congratulations on Level 60!</h2>
+    <p><strong>You have reached endgame!</strong><br>This guide will walk you through the PvE gearing path from your first set of gear to the hardest dungeons in Old School TERA.</p>
   </div>
+</center></section>
 
-  <div class="grid">
-    <!-- Weapon -->
-    <div class="calc-card" data-calc data-gear="weapon">
-      <div class="calc-title-row">
-        <div class="calc-title">Weapon</div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label class="field-label enchant">Enchant Level</label>
-          <select class="enchant-input">
-            <option value="1">+1</option>
-            <option value="2">+2</option>
-            <option value="3">+3</option>
-            <option value="4">+4</option>
-            <option value="5">+5</option>
-            <option value="6">+6</option>
-            <option value="7">+7</option>
-            <option value="8">+8</option>
-            <option value="9">+9</option>
-            <option value="10">+10</option>
-            <option value="11">+11</option>
-            <option value="12" selected>+12</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="field-label modifier">Attack Modifier</label>
-          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 3499" />
-        </div>
-        <div class="field">
-          <label class="field-label bonus">+Bonus Value</label>
-          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 1363" />
-        </div>
-      </div>
-
-      <div class="result-row">
-        <div class="result-label">Bonus</div>
-        <div class="result-chip neutral" data-result>—</div>
-      </div>
-    </div>
-
-    <!-- Chest -->
-    <div class="calc-card" data-calc data-gear="chest">
-      <div class="calc-title-row">
-        <div class="calc-title">Chest</div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label class="field-label enchant">Enchant Level</label>
-          <select class="enchant-input">
-            <option value="1">+1</option>
-            <option value="2">+2</option>
-            <option value="3">+3</option>
-            <option value="4">+4</option>
-            <option value="5">+5</option>
-            <option value="6">+6</option>
-            <option value="7">+7</option>
-            <option value="8">+8</option>
-            <option value="9">+9</option>
-            <option value="10">+10</option>
-            <option value="11">+11</option>
-            <option value="12" selected>+12</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="field-label modifier">Defense Modifier</label>
-          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 4186" />
-        </div>
-        <div class="field">
-          <label class="field-label bonus">+Bonus Value</label>
-          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 2385" />
-        </div>
-      </div>
-
-      <div class="result-row">
-        <div class="result-label">Bonus</div>
-        <div class="result-chip neutral" data-result>—</div>
-      </div>
-    </div>
-
-    <!-- Boots -->
-    <div class="calc-card" data-calc data-gear="boots">
-      <div class="calc-title-row">
-        <div class="calc-title">Boots</div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label class="field-label enchant">Enchant Level</label>
-          <select class="enchant-input">
-            <option value="1">+1</option>
-            <option value="2">+2</option>
-            <option value="3">+3</option>
-            <option value="4">+4</option>
-            <option value="5">+5</option>
-            <option value="6">+6</option>
-            <option value="7">+7</option>
-            <option value="8">+8</option>
-            <option value="9">+9</option>
-            <option value="10">+10</option>
-            <option value="11">+11</option>
-            <option value="12" selected>+12</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="field-label modifier">Defense Modifier</label>
-          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 3055" />
-        </div>
-        <div class="field">
-          <label class="field-label bonus">+Bonus Value</label>
-          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 1710" />
-        </div>
-      </div>
-
-      <div class="result-row">
-        <div class="result-label">Bonus</div>
-        <div class="result-chip neutral" data-result>—</div>
-      </div>
-    </div>
-
-    <!-- Gloves -->
-    <div class="calc-card" data-calc data-gear="gloves">
-      <div class="calc-title-row">
-        <div class="calc-title">Gloves</div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label class="field-label enchant">Enchant Level</label>
-          <select class="enchant-input">
-            <option value="1">+1</option>
-            <option value="2">+2</option>
-            <option value="3">+3</option>
-            <option value="4">+4</option>
-            <option value="5">+5</option>
-            <option value="6">+6</option>
-            <option value="7">+7</option>
-            <option value="8">+8</option>
-            <option value="9">+9</option>
-            <option value="10">+10</option>
-            <option value="11">+11</option>
-            <option value="12" selected>+12</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="field-label modifier">Defense Modifier</label>
-          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 3139" />
-        </div>
-        <div class="field">
-          <label class="field-label bonus">+Bonus Value</label>
-          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 1789" />
-        </div>
-      </div>
-
-      <div class="result-row">
-        <div class="result-label">Bonus</div>
-        <div class="result-chip neutral" data-result>—</div>
-      </div>
-    </div>
+<!-- TABLE OF CONTENTS -->
+<section>
+  <h2>Contents</h2>
+  <div class="card">
+    <ul class="toc-grid">
+      <li><a class="toc-button" href="#roadmap">Roadmap &amp; Progression</a></li>
+      <li><a class="toc-button" href="#summary">Dungeon &amp; Loot Summary</a></li>
+      <li><a class="toc-button" href="#dreamkeeper">Starter Gear (Dreamkeeper)</a></li>
+      <li><a class="toc-button" href="#kn">Beginner Dungeon – KN</a></li>
+      <li><a class="toc-button" href="#bt">Normal Mode Dungeons</a></li>
+      <li><a class="toc-button" href="#bth">Hard Mode – Tier 1</a></li>
+      <li><a class="toc-button" href="#ach">Hard Mode – Tier 2</a></li>
+      <li><a class="toc-button" href="#mch">Final Challenge – MCH</a></li>
+      <li><a class="toc-button" href="#visionmaker">BiS Gear (Visionmaker)</a></li>
+      <li><a class="toc-button" href="#glossary">Glossary</a></li>
+    </ul>
   </div>
+</section>
 
-  <!-- Background -->
-  <div class="collapsible">
-    <div class="collapsible-header"
-         onclick="toggleCollapsible('background')"
-         aria-expanded="false"
-         aria-controls="backgroundContent">
+<!-- ROADMAP / PROGRESSION OVERVIEW -->
+<section id="roadmap">
+  <h2>Roadmap &amp; Progression</h2>
+  <div class="card">
+    <h3>Dungeon Progression</h3>
+    <ul class="progression-list">
+      <li>
+        <img src="banners/DungeonProgression.png" alt="KN &gt; BT &gt; FoK &gt; AC &gt; MC &gt; BTH &gt; FoKH &gt; ACH &gt; KNH &gt; MCH" class="banner-img">
+      </li>
+    </ul>
 
-      <span class="collapsible-icon" id="backgroundIcon">▶</span>
-      <span class="collapsible-title">Background</span>
-    </div>
-
-    <div class="collapsible-content" id="backgroundContent">
-      <div class="collapsible-body">
-        <p>
-          When TERA launched, its developers wanted a gearing system that rewarded progression
-          without making equipment feel completely deterministic. In many MMOs, once a player
-          obtained a piece of gear and upgraded it to its maximum enchant level, there was little
-          reason to pursue that same item again.
-        </p>
-
-        <p>
-          To address this, the developers introduced
-          small, randomized stat rolls within the gear's bonuses—<strong>1%, 2%, or 3%</strong> of a base stat.
-          The difference between these rolls is intentionally small as the goal is not to drastically
-          change player power, but to introduce subtle item quality variance that rewards
-          players who continue optimizing their gear.
-        </p>
-      </div>
-    </div>
+    <h3>Gear Progression</h3>
+    <ul class="progression-list">
+      <li>
+        <img src="banners/GearProgression.png" alt="Dreamkeeper &gt; Abyss &gt; Mayhem / Regent &gt; Visionmaker" class="banner-img">
+      </li>
+    </ul>
   </div>
+</section>
 
-  <!-- Why This Tool Exists -->
-  <div class="collapsible">
-    <div class="collapsible-header"
-         onclick="toggleCollapsible('whyTool')"
-         aria-expanded="false"
-         aria-controls="whyToolContent">
+<!-- SUMMARY TABLE -->
+<section id="summary">
+  <h2>Dungeon &amp; Loot Summary</h2>
+  <table class="roadmap-table">
+    <thead>
+      <tr>
+        <th>Dungeon</th>
+        <th>Gear Drops</th>
+        <th>Tokens</th>
+        <th>Jewelry</th>
+        <th>Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- SUMMARY - Kelsaik's Nest (Normal) -->
+      <tr>
+        <th scope="row"><a href="#kn" style="color:inherit;text-decoration:underline;">KN</a></th>
+        <td>
+          <img class="icon" src="icons/DreamkeeperWeapon.png" alt="">Dreamkeeper Weapon<br>
+          <img class="icon" src="icons/DreamkeeperChest.png" alt="">Dreamkeeper Chest<br>
+          <img class="icon" src="icons/DreamkeeperGloves.png" alt="">Dreamkeeper Gloves<br>
+          <img class="icon" src="icons/DreamkeeperBoots.png" alt="">Dreamkeeper Boots
+        </td>
+        <td>
+          <img class="icon" src="icons/MarkOfInception.png" alt="">Inception<br>
+          <img class="icon" src="icons/GlyphToken.png" alt="">Glyph Token<br>
+          <img class="icon" src="icons/SupplyToken.png" alt="">Supply Token
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperEarring.png" alt="">Entry-level Earring<br>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Entry-level Necklace<br>
+          <img class="icon" src="icons/DreamkeeperRing.png" alt="">Entry-level Ring
+        </td>
+        <td>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
 
-      <span class="collapsible-icon" id="whyToolIcon">▶</span>
-      <span class="collapsible-title">Why This Tool Exists</span>
-    </div>
+      <!-- SUMMARY - Balder's Temple (Normal) -->
+      <tr>
+        <th scope="row"><a href="#bt" style="color:inherit;text-decoration:underline;">BT</a></th>
+        <td>-</td>
+        <td><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
 
-    <div class="collapsible-content" id="whyToolContent">
-      <div class="collapsible-body">
-        <p>
-          TERA does not display these bonus percentages directly. Instead, it shows the
-          <strong>final calculated stat values</strong>, which are derived from the base stat,
-          enchant multipliers, and the hidden bonus percentage. Because the game also
-          rounds values down during calculations, the resulting numbers can
-          appear inconsistent, making it difficult to immediately determine whether a roll
-          is +1%, +2%, or +3%.
-        </p>
+      <!-- SUMMARY - Fane of Kaprima (Normal) -->
+      <tr>
+        <th scope="row"><a href="#fok" style="color:inherit;text-decoration:underline;">FoK</a></th>
+        <td>-</td>
+        <td><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
 
-        <p>
-          For this reason, community-developed calculators were created to reverse-engineer the hidden percentage from the
-          final stat values and accurately determine an item's bonus. Earlier tools, however, often
-          required excessive manual input or relied on dense spreadsheet-style layouts that were difficult to
-          parse at a glance.
-        </p>
-        <p>
-          In this vein, this tool was created to provide a clearer, more streamlined experience for an otherwise mysterious aspect of the game.
-        </p>
-      </div>
-    </div>
+      <!-- SUMMARY - Argon Corpus (Normal) -->
+      <tr>
+        <th scope="row"><a href="#ac" style="color:inherit;text-decoration:underline;">AC</a></th>
+        <td>-</td>
+        <td><img class="icon" src="icons/AbyssalMark.png" alt="">Greater Abyssal Mark</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/DesignChest.png" alt="">Visionmaker Armor Design*<br>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock<br>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Manaya's Core (Normal) -->
+      <tr>
+        <th scope="row"><a href="#mc" style="color:inherit;text-decoration:underline;">MC</a></th>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/DesignWeapon.png" alt="">Visionmaker Weapon Design*<br>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Balder's Temple (Hard) -->
+      <tr>
+        <th scope="row"><a href="#bth" style="color:inherit;text-decoration:underline;">BTH</a></th>
+        <td>
+          <img class="icon" src="icons/AbyssGloves.png" alt="">Abyss Gloves
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (x2)
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Mid-level Necklace<br>
+          <img class="icon" src="icons/DreamkeeperRing.png" alt="">Mid-level Ring
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamBindings.png" alt="">Dream Bindings*<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Fane of Kaprima (Hard) -->
+      <tr>
+        <th scope="row"><a href="#fokh" style="color:inherit;text-decoration:underline;">FoKH</a></th>
+        <td>
+          <img class="icon" src="icons/AbyssBoots.png" alt="">Abyss Boots
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (x2)
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Mid-level Necklace<br>
+          <img class="icon" src="icons/DreamkeeperEarring.png" alt="">Mid-level Earring
+        </td>
+        <td>
+          <img class="icon" src="icons/Fanesteel.png" alt="">Fanesteel*<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Argon Corpus (Hard) -->
+      <tr>
+        <th scope="row"><a href="#ach" style="color:inherit;text-decoration:underline;">ACH</a></th>
+        <td>
+          <img class="icon" src="icons/AbyssWeapon.png" alt="">Abyss Weapon<br>
+          <img class="icon" src="icons/AbyssChest.png" alt="">Abyss Chest
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Greater Abyssal Mark (x2)
+        </td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Kelsaik's Nest (Hard) -->
+      <tr>
+        <th scope="row"><a href="#knh" style="color:inherit;text-decoration:underline;">KNH</a></th>
+        <td>
+          <img class="icon" src="icons/MayhemChest.png" alt="">Mayhem Chest
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Mark of the Phoenix
+        </td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/PristinePhoenixBeak.png" alt="">Pristine Phoenix Beak*<br>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Manaya's Core (Hard) -->
+      <tr>
+        <th scope="row"><a href="#mch" style="color:inherit;text-decoration:underline;">MCH</a></th>
+        <td>
+          <img class="icon" src="icons/RegentWeapon.png" alt="">Regent Weapon<br>
+          <img class="icon" src="icons/RegentChest.png" alt="">Regent Chest<br>
+          <img class="icon" src="icons/RegentGloves.png" alt="">Regent Gloves<br>
+          <img class="icon" src="icons/RegentBoots.png" alt="">Regent Boots
+        </td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">BiS Necklace<br>
+          <img class="icon" src="icons/PhoenixEar.png" alt="">BiS Earring<br>
+          <img class="icon" src="icons/PhoenixSignet.png" alt="">BiS Ring
+        </td>
+        <td>
+          <img class="icon" src="icons/ShandrasQuill.png" alt="">Shandra's Quill*
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p align="right">
+    *Needed for crafting
+    <a href="#visionmaker" style="color:#e5c76b; text-decoration:underline;">
+      Visionmaker Gear
+    </a>
+  </p>
+</section>
+
+<section aria-label="Guide banner">
+  <div class="card">
+    <img src="banners/GuideBanner.png" alt="Guide section banner" class="banner-img">
   </div>
+</section>
 
-  <!-- How It Works Collapsible -->
-  <div class="collapsible">
-    <div class="collapsible-header" onclick="toggleCollapsible('howItWorks')">
-      <span class="collapsible-icon" id="howItWorksIcon">▶</span>
-      <span class="collapsible-title">How It Works</span>
+<!-- PART 1 - DREAMKEEPER -->
+<section id="dreamkeeper">
+  <h2>Part 1 — Starter Gear (Dreamkeeper)</h2>
+  <div class="card">
+    <h3>Inception Tokens</h3>
+    <p>After reaching level 60 you will receive a <img class="icon" src="icons/ParcelPost.png" alt="">Parcel Post containing materials used for early endgame progression.</p>
+
+    <p>Your endgame PvE journey begins with <strong><img class="icon" src="icons/MarkOfInception.png" alt="">Inception Tokens</strong>. These allow you to purchase your first PvE gear and other essential progression items from the Inception Shop.</p>
+
+    <h4>What to Buy First</h4>
+    <ol>
+      <li>
+        <img class="icon" src="icons/DreamkeeperWeapon.png" alt="">
+        <img class="icon" src="icons/DreamkeeperChest.png" alt="">
+        <img class="icon" src="icons/DreamkeeperGloves.png" alt="">
+        <img class="icon" src="icons/DreamkeeperBoots.png" alt="">
+        <img class="icon" src="icons/DreamkeeperEarring.png" alt="">
+        <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">
+        <strong>Dreamkeeper Set</strong> – Your first PvE gear set. Buy this first.
+      </li>
+      <li>
+        <img class="icon" src="icons/GlyphToken.png" alt=""><strong>Glyph Tokens</strong> – Used to unlock glyphs that enhance your class abilities.
+      </li>
+    </ol>
+
+    <h4>Farming Inception Tokens</h4>
+    <p>Once you purchase your first Dreamkeeper piece, you will need more <img class="icon" src="icons/MarkOfInception.png" alt="">Inception Tokens (or gear drops) to complete the full set. Both can be acquired from Kelsaik's Nest (Normal).</p>
+  </div>
+  <div class="tip">Tip: <strong>Weapons</strong> &gt; <strong>Gloves</strong> &gt; <strong>Chest</strong> &gt; <strong>Boots</strong>. Since Weapon and Gloves contribute to <span style="color:#FFB6B6">damage output</span> whereas Chest and Boots provide <span style="color:#ADD8E6">defense</span>, it's typically best to prioritize obtaining/enchanting your Weapon first, then Gloves, then Chest, then Boots.</div>
+</section>
+
+<!-- PART 2 - BEGINNER DUNGEONS -->
+<section id="kn">
+  <h2>Part 2 — Beginner Dungeons</h2>
+  <div class="card">
+    <h3>Kelsaik's Nest (Normal) [KN]</h3>
+    <p>Queue for this dungeon using the <img class="icon" src="icons/InstanceMatching.png" alt="">Instance Matching system, recruit others via <span style="font-family:monospace;color:#87cefa;">LFG (Default="Y" Key)</span>, and/or request help from other players via <span style="font-family:monospace;color:#FFEB2A;">Global Chat (/c)</span>.</p>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest3.webp" alt="">
     </div>
-    <div class="collapsible-content" id="howItWorksContent">
-      <div class="collapsible-body">
-        <p>This tool calculates the quality of your gear bonus rolls using the following formulas:</p>
-<h4>Weapon:</h4>
-<p class="formula-inline">
-  <span class="formula-badge">Bonus%</span>
-  <code>
-    =
-    (
-      <span style="color: #4bff9c;">AttackBonus</span>
-      − ROUNDDOWN(
-        <span style="color: #4aa8ff;">AttackMod</span>
-        × 0.03 ×
-        <span style="color: #ffd700;">Enchant</span>
-      )
-    )
-    /
-    <span style="color: #4aa8ff;">AttackMod</span>
-  </code>
-</p>
-
-<h4>Chest, Gloves, Boots:</h4>
-<p class="formula-inline">
-  <span class="formula-badge">Bonus%</span>
-  <code>
-    =
-    (
-      <span style="color: #4bff9c;">DefenseBonus</span>
-      − ROUNDDOWN(
-        <span style="color: #4aa8ff;">DefenseMod</span>
-        × 0.045 ×
-        <span style="color: #ffd700;">Enchant</span>
-      )
-    )
-    /
-    <span style="color: #4aa8ff;">DefenseMod</span>
-  </code>
-</p>
-
-        <h4>Roll Quality Interpretation:</h4>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 124)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemy: Kelsaik</li>
+      <li>Rewards:
         <ul>
-          <li><strong style="color: var(--red);">1% (Red)</strong> — Worst Roll (Bonus% &lt; 0.01)</li>
-          <li><strong style="color: var(--orange);">2% (Orange)</strong> — Average Roll (Bonus% 0.01 to 0.025)</li>
-          <li><strong style="color: var(--green);">3% (Green)</strong> — Perfect Roll (Bonus% ≥ 0.025)</li>
+          <li><img class="icon" src="icons/DreamkeeperWeapon.png" alt="">Dreamkeeper Weapon <i>(up to +6 Enchant)</i></li>
+          <li><img class="icon" src="icons/DreamkeeperChest.png" alt="">Dreamkeeper Chest <i>(up to +6 Enchant)</i></li>
+          <li><img class="icon" src="icons/DreamkeeperGloves.png" alt="">Dreamkeeper Gloves <i>(up to +6 Enchant)</i></li>
+          <li><img class="icon" src="icons/DreamkeeperBoots.png" alt="">Dreamkeeper Boots <i>(up to +6 Enchant)</i></li>
+          <li><img class="icon" src="icons/DreamkeeperEarring.png" alt="">Caged Raindrop</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Thulsan Curio</li>
+          <li><img class="icon" src="icons/DreamkeeperRing.png" alt="">Sunder Ring</li>
+          <li><img class="icon" src="icons/MarkOfInception.png" alt="">Inception Token</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+          <li><img class="icon" src="icons/SupplyToken.png" alt="">Supply Token</li>
         </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="goal">Run Kelsaik's Nest repeatedly until your Dreamkeeper Set is complete.</div>
+</section>
 
-        <p>The formulas compare your actual bonus to the minimum expected value for your enchant level, then turn that difference into a quality score.</p>
-      </div>
+<!-- PART 3 - NORMAL MODE DUNGEONS -->
+<section id="bt">
+  <h2>Part 3 — Normal Mode Dungeons</h2>
+  <p>With your Dreamkeeper set complete, begin farming Normal Mode dungeons for enchanting materials.</p>
+
+  <!-- DETAILS - Balder's Temple (Normal) -->
+  <div class="dungeon">
+    <h3>Balder's Temple (Normal) [BT]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple3.webp" alt="">
     </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 138)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Kakun, Watcher of the Garden</li>
+        <li>Lagreah, Protector of the Garden <u>and/or</u> Grig, Keeper of Flame</li>
+        <li>Glaciernus, the Frostbinder</li>
+        <li>Auricadis, Guardian of the Relic</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+        </ul>
+      </li>
+    </ul>
   </div>
 
-  <!-- Acknowledgements -->
-  <div class="collapsible">
-    <div class="collapsible-header" onclick="toggleCollapsible('acknowledgements')">
-      <span class="collapsible-icon" id="acknowledgementsIcon">▶</span>
-      <span class="collapsible-title">Acknowledgements</span>
+  <!-- DETAILS - Fane of Kaprima (Normal) -->
+  <div class="dungeon" id="fok">
+    <h3>Fane of Kaprima (Normal) [FoK]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima3.webp" alt="">
     </div>
-    <div class="collapsible-content" id="acknowledgementsContent">
-      <div class="collapsible-body">
-        <p class="credit"><strong>Source Material &amp; Research: </strong>Idi0ticGenius, Loriri - TERA NA Tempest Reach / KTERA 벨릭의 은총</p>
-        <p class="credit"><strong>Tool Creator: </strong>Eph - Old School TERA Online</p>
-        <p class="credit"><strong>Last Modified: </strong>March 2026</p>
-      </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 139)</span>
     </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Pyrvathas, Infernal Gatekeeper</li>
+        <li>Agarta, Syndicate Battlemaster</li>
+        <li>Kornus, Champion of Kaprima</li>
+        <li>Kaprima, Demon Reaver</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+        </ul>
+      </li>
+    </ul>
   </div>
+
+  <!-- DETAILS - Argon Corpus (Normal) -->
+  <div class="dungeon" id="ac">
+    <h3>Argon Corpus (Normal) [AC]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 140)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Cygnus, Fist of Manaya</li>
+        <li>Halveterak Overseer, Cyanoguard</li>
+        <li>Lokmar Sorgalur, Beholder</li>
+        <li>Meldita, Eye of Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/DesignChest.png" alt="">Visionmaker Chest Design</li>
+          <li><img class="icon" src="icons/DesignGloves.png" alt="">Visionmaker Gloves Design</li>
+          <li><img class="icon" src="icons/DesignBoots.png" alt="">Visionmaker Boots Design</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Greater Abyssal Mark (for Abyss Weapon and Chest)</li>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- DETAILS - Manaya's Core (Normal) -->
+  <div class="dungeon" id="mc">
+    <h3>Manaya's Core (Normal) [MC]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ManayasCore1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 141)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Hrathgol</li>
+        <li>Melkatran</li>
+        <li>Shandra Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/DesignWeapon.png" alt="">Visionmaker Weapon Design</li>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="goal">
+    Run these dungeons repeatedly until your Dreamkeeper Set is enchanted to at least +9.
+    For best results in Hard Modes, use <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scrolls and <img class="icon" src="icons/IntricateIdentificationScroll.png" alt="">Intricate Identification Scrolls to enchant to +12.
+  </div>
+</section>
+
+<!-- PART 4 - HARD MODE TIER 1 -->
+<section id="bth">
+  <h2>Part 4 — Hard Mode Dungeons (Tier 1)</h2>
+  <div class="tip">Tip: Clear Normal Mode consistently before attempting Hard Mode. Bring consumables (like <img class="icon" src="icons/OnslaughtScrollCritFactorV.png" alt="">Onslaught Scrolls and <img class="icon" src="icons/NostrumOfEnergyV.png" alt="">Nostrums of Energy) and learn dungeon mechanics.</div>
+
+  <!-- Balder's Temple (Hard) -->
+  <div class="dungeon">
+    <h3>Balder's Temple (Hard Mode) [BTH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 142)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Kakun, Watcher of the Garden</li>
+        <li>Nightmare Lagreah, Protector of the Garden <u>and/or</u> Nightmare Grig, Keeper of Flame</li>
+        <li>Nightmare Glaciernus, the Frostbinder</li>
+        <li>Nightmare Auricadis, Guardian of the Relic</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssGloves.png" alt="">Abyss Gloves</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">2x Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/DreamkeeperRing.png" alt="">Sprocket Ring</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Chain of Deceit</li>
+          <li><img class="icon" src="icons/DreamBindings.png" alt="">Dream Bindings</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Fane of Kaprima (Hard) -->
+  <div class="dungeon" id="fokh">
+    <h3>Fane of Kaprima (Hard Mode) [FoKH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 143)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Pyrvathas, Infernal Gatekeeper</li>
+        <li>Nightmare Agarta, Syndicate Battlemaster</li>
+        <li>Nightmare Kornus, Champion of Kaprima</li>
+        <li>Nightmare Kaprima, Demon Reaver</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssBoots.png" alt="">Abyss Boots</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">2x Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/DreamkeeperEarring.png" alt="">Dangling Fork</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Chain of Deceit</li>
+          <li><img class="icon" src="icons/Fanesteel.png" alt="">Fanesteel</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- PART 5 - HARD MODE TIER 2 -->
+<section id="ach">
+  <h2>Part 5 — Hard Mode Dungeons (Tier 2)</h2>
+  <div class="warning">Prepare with optimized glyphs, consumables (especially <strong>Rank V</strong> <img class="icon" src="icons/OnslaughtScrollCritFactorV.png" alt="">Onslaught Scrolls and <img class="icon" src="icons/NostrumOfEnergyV.png" alt="">Nostrums of Energy), and a coordinated group before attempting these dungeons.</div>
+
+  <!-- Argon Corpus (Hard) -->
+  <div class="dungeon">
+    <h3>Argon Corpus (Hard Mode) [ACH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 144)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Cygnus, Fist of Manaya</li>
+        <li>Nightmare Halveterak Overseer, Cyanoguard</li>
+        <li>Nightmare Lokmar Sorgalur, Beholder</li>
+        <li>Nightmare Meldita, Eye of Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssWeapon.png" alt="">Abyss Weapon</li>
+          <li><img class="icon" src="icons/AbyssChest.png" alt="">Abyss Chest</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">2x Greater Abyssal Mark (for Abyss Weapon and Chest)</li>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Kelsaik's Nest (Hard) -->
+  <div class="dungeon" id="knh">
+    <h3>Kelsaik's Nest (Hard Mode) [KNH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+      </span>
+      <span class="item-level">(iLvl 145)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemy: Nightmare Kelsaik</li>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+          <li><img class="icon" src="icons/PristinePhoenixBeak.png" alt="">Pristine Phoenix Beak</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/MayhemChest.png" alt="">Mayhem Chest</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Mark of the Phoenix (for Mayhem Chest or Pristine Phoenix Beak)</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="goal">
+    Run these dungeons repeatedly until your Abyss/Mayhem Set is enchanted to at least +9.
+    For best results in Manaya's Core (Hard Mode), use <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scrolls and <img class="icon" src="icons/IntricateIdentificationScroll.png" alt="">Intricate Identification Scrolls to enchant to +12.
+  </div>
+</section>
+
+<!-- PART 6 - FINAL CHALLENGE -->
+<section id="mch">
+  <h2>Part 6 — The Final Challenge</h2>
+  <div class="warning">This is the ultimate PvE challenge.</div>
+  <div class="dungeon">
+    <h3>Manaya's Core (Hard Mode) [MCH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ManayasCore1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore3.webp" alt="">
+    </div>
+
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+      </span>
+      <span class="item-level">(iLvl 146)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Hrathgol</li>
+        <li>Nightmare Melkatran</li>
+        <li>Nightmare Shandra Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/RegentWeapon.png" alt="">Regent Weapon</li>
+          <li><img class="icon" src="icons/RegentChest.png" alt="">Regent Chest</li>
+          <li><img class="icon" src="icons/RegentGloves.png" alt="">Regent Gloves</li>
+          <li><img class="icon" src="icons/RegentBoots.png" alt="">Regent Boots</li>
+          <li><img class="icon" src="icons/PhoenixEar.png" alt="">Phoenix Ear</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Crown Jewels</li>
+          <li><img class="icon" src="icons/PhoenixSignet.png" alt="">Phoenix Signet</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+
+<!-- VISIONMAKER -->
+<section id="visionmaker">
+<h2>Part 7 — BiS Gear (Visionmaker)</h2>
+
+<p>
+The Visionmaker Set represents OSTO's <strong>Best-in-Slot (BiS)</strong> equipment for this progression tier. Unlike most endgame gear, Visionmaker gear is not obtained simply from dungeon drops and must instead be <strong>crafted</strong>. </p>
+<p>
+Crafting Visionmaker requires collecting a wide variety of materials from across the game, including high-level PvE dungeons, reputation dailies, PvP rewards, and rare gathering resources. As a result, completing a full Visionmaker set typically requires participation in several different endgame activities. 
+Players must also reach <strong>Artisan-level crafting</strong> in the appropriate profession before they can craft Visionmaker weapons/armor.
+</p>
+
+<h3>Crafting Requirements</h3>
+
+<p><i>(For information on how to acquire each material, hover each requirement.)</i></p>
+
+<table class="vm-table">
+
+<tr>
+<th>Materials</th>
+<th>Weapon</th>
+<th>Chest</th>
+<th>Gloves</th>
+<th>Boots</th>
+<th>Total</th>
+</tr>
+
+
+<!-- Artisan Crafting Requirement -->
+<tr>
+<td>
+  <div class="item tooltip-trigger">
+    <img src="icons/Crafting.png">
+    <span>Crafting Rank</span>
+
+    <div class="tooltip">
+      <img src="icons/Crafting.png">
+
+      <div class="tooltip-title">Artisan Crafting Skill</div>
+      <div class="tooltip-desc">Crafting skill level/rank. See Crafting Menu (Default="J" Key)</div>
+
+      <div class="tooltip-header">Source</div>
+      <div class="tooltip-entry"><span style="color:teal;">Crafting</span>: See crafting vendors in main cities and achieve Artisan-level proficiency in Weaponcrafting or Armorcrafting.</div>
+    
+	      <div class="tooltip-header">OSTO Difference</div>
+      <div class="tooltip-entry"><span style="color:orange;">No Alts/Resets Required</span>: Unlike retail, OSTO allows you to Artisan <strong>all</strong> professions, not just one.</div>
+
+	</div>
+  </div>
+</td>
+<td>Weaponcrafting<br>(Artisan)</td>
+<td>Armorcrafting<br>(Artisan)</td>
+<td>Armorcrafting<br>(Artisan)</td>
+<td>Armorcrafting <br>(Artisan)</td>
+<td><strong>Artisan</strong></td>
+</tr>
+
+<!-- Designs -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/DesignWeapon.png">
+<span>Visionmaker Design</span>
+
+<div class="tooltip">
+<img src="icons/DesignWeapon.png">
+<img src="icons/DesignChest.png">
+<img src="icons/DesignGloves.png">
+<img src="icons/DesignBoots.png">
+
+<div class="tooltip-title">Visionmaker Design</div>
+<div class="tooltip-desc">Use this design to learn the corresponding Visionmaker crafting skill.</div>
+
+<div class="tooltip-header">Weapon</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Manaya’s Core (Normal)</div>
+
+<div class="tooltip-header">Armor</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Argon Corpus (Hard)</div>
+
 </div>
+</div>
+</td>
+
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td><strong>4</strong></td>
+</tr>
+
+<!-- Fanesteel -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/Fanesteel.png">
+<span>Fanesteel</span>
+
+<div class="tooltip">
+<img src="icons/Fanesteel.png">
+
+<div class="tooltip-title">Fanesteel</div>
+<div class="tooltip-desc">[Dropped Material] Metal of demonic origin used to craft Visionmaker weapons.</div>
+
+<div class="tooltip-header">Source</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Fane of Kaprima (Hard)</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Juleor – Killing Spree Quartermaster (Velika)</div>
+</div>
+</div>
+</td>
+<td>500</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td><strong>500</strong></td>
+</tr>
+
+
+<!-- Dream Bindings -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/DreamBindings.png">
+<span>Dream Bindings</span>
+
+<div class="tooltip">
+<img src="icons/DreamBindings.png">
+
+<div class="tooltip-title">Dream Bindings</div>
+<div class="tooltip-desc">[Dropped Material] Strong strips of material used to craft Visionmaker armor.</div>
+
+<div class="tooltip-header">Source</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Balder’s Temple (Hard)</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Surah – Bellicarium Quartermaster (Velika)</div>
+</div>
+</div>
+</td>
+<td>-</td>
+<td>400</td>
+<td>200</td>
+<td>200</td>
+<td><strong>800</strong></td>
+</tr>
+
+
+<!-- Pristine Phoenix Beak -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/PristinePhoenixBeak.png">
+<span>Pristine Phoenix Beak</span>
+
+<div class="tooltip">
+<img src="icons/PristinePhoenixBeak.png">
+
+<div class="tooltip-title">Pristine Phoenix Beak</div>
+<div class="tooltip-desc">Though this beak was violently torn from the head of Kelsaik, fire still crackles around it.</div>
+
+<div class="tooltip-header">Dropped By</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Nightmare Kelsaik – Kelsaik’s Nest (Hard)</div>
+</div>
+</div>
+</td>
+<td>9</td>
+<td>6</td>
+<td>3</td>
+<td>3</td>
+<td><strong>21</strong></td>
+</tr>
+
+
+<!-- Shandra's Quill -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ShandrasQuill.png">
+<span>Shandra’s Quill</span>
+
+<div class="tooltip">
+<img src="icons/ShandrasQuill.png">
+
+<div class="tooltip-title">Shandra’s Quill</div>
+<div class="tooltip-desc">Feather-like fragment dropped by Shandra Manaya. Used to craft Visionmaker equipment.</div>
+
+<div class="tooltip-header">Dropped By</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Nightmare Shandra Manaya – Manaya’s Core (Hard)</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+
+<!-- Kaelic Spark -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/KaelicSpark.png">
+<span>Kaelic Spark</span>
+
+<div class="tooltip">
+<img src="icons/KaelicSpark.png">
+
+<div class="tooltip-title">Kaelic Spark</div>
+<div class="tooltip-desc">Rare gathering resource from Val Kaeli used to craft Visionmaker equipment.</div>
+
+<div class="tooltip-header">Gathered From</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Gathering Nodes – Rare drop</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+
+<!-- Cyasmic Oil -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/CyasmicOil.png">
+<span>Cyasmic Oil</span>
+
+<div class="tooltip">
+<img src="icons/CyasmicOil.png">
+
+<div class="tooltip-title">Cyasmic Oil</div>
+<div class="tooltip-desc">Oily bladder from argon monsters used in Visionmaker crafting.</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Provelle – Invalesco Merchant (Pathfinder Post)</div>
+</div>
+</div>
+</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td><strong>5</strong></td>
+</tr>
+
+
+<!-- Argon Vitriol -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ArgonVitriol.png">
+<span>Argon Vitriol</span>
+
+<div class="tooltip">
+<img src="icons/ArgonVitriol.png">
+
+<div class="tooltip-title">Argon Vitriol</div>
+<div class="tooltip-desc">Durable material dropped from argon enemies.</div>
+
+<div class="tooltip-header">Dropped By</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Level 60 BAMs (Argonea, Granarkus)</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+
+<!-- Chaos Block -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ChaosBlock.png">
+<span>Chaos Block</span>
+
+<div class="tooltip">
+<img src="icons/ChaosBlock.png">
+
+<div class="tooltip-title">Chaos Block</div>
+<div class="tooltip-desc">Fragment infused with chaotic nexus energy.</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:grey;">Nexus</span>: Eriale – Agnitor Merchant (Zulfikar Fortress)</div>
+</div>
+</div>
+</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td><strong>5</strong></td>
+</tr>
+
+
+<!-- Victor's Trophy -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/VictorsTrophy.png">
+<span>Victor’s Trophy</span>
+
+<div class="tooltip">
+<img src="icons/VictorsTrophy.png">
+
+<div class="tooltip-title">Victor’s Trophy</div>
+<div class="tooltip-desc">Used to craft Visionmaker and Nightforge equipment.</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Surah – Bellicarium Quartermaster (Velika)</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Juleor – Killing Spree Quartermaster (Velika)</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+</table>
+</section>
+
+
+<section id="visionmaker-sets">
+<h3>Visionmaker Class Sets</h3>
+
+
+<!-- Warrior -->
+<details class="class-set role-hybrid">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconWarrior.webp">
+    Warrior
+  </summary>
+  <div class="gear-grid">
+
+<div>
+      <div class="gear-title">Foresight & Hindsight</div>
+      <img src="sets/visionmaker/WarriorWeapon.png" alt="Foresight & Hindsight">
+    </div>
+
+<div>
+      <div class="gear-title">Dreamroll Vest</div>
+      <img src="sets/visionmaker/WarriorChest.png" alt="Dreamroll Vest">
+    </div>
+<div>
+      <div class="gear-title">Dreamer’s Boots</div>
+      <img src="sets/visionmaker/LeatherBoots.png" alt="Dreamer’s Boots">
+    </div>
+<div>
+      <div class="gear-title">Scryhands</div>
+      <img src="sets/visionmaker/LeatherGloves.png" alt="Scryhands">
+    </div>
+
+
+
+  </div>
+</details>
+
+<!-- Lancer -->
+<details class="class-set role-tank">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconLancer.webp">
+    Lancer
+  </summary>
+  <div class="gear-grid">
+
+<div>
+      <div class="gear-title">Seerstrike</div>
+      <img src="sets/visionmaker/LancerWeapon.png" alt="Seerstrike">
+    </div>
+
+<div>
+      <div class="gear-title">Steelgaze Defender</div>
+      <img src="sets/visionmaker/LancerChest.png" alt="Steelgaze Defender">
+    </div>
+<div>
+      <div class="gear-title">Walk of the Watch</div>
+      <img src="sets/visionmaker/PlateBoots.png" alt="Walk of the Watch">
+    </div>
+<div>
+      <div class="gear-title">Trancebreakers</div>
+      <img src="sets/visionmaker/PlateGloves.png" alt="Trancebreakers">
+    </div>
+
+
+
+  </div>
+</details>
+
+<!-- Slayer -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconSlayer.webp">
+    Slayer
+  </summary>
+  <div class="gear-grid">
+
+<div>
+      <div class="gear-title">Dreamblade</div>
+      <img src="sets/visionmaker/SlayerWeapon.png" alt="Dreamblade">
+    </div>
+
+<div>
+      <div class="gear-title">Dreamswept Vest</div>
+      <img src="sets/visionmaker/SlayerChest.png" alt="Dreamswept Vest">
+    </div>
+<div>
+      <div class="gear-title">Dreamer’s Boots</div>
+      <img src="sets/visionmaker/LeatherBoots.png" alt="Dreamer’s Boots">
+    </div>
+<div>
+      <div class="gear-title">Scryhands</div>
+      <img src="sets/visionmaker/LeatherGloves.png" alt="Scryhands">
+    </div>
+
+
+
+  </div>
+</details>
+
+<!-- Berserker -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconBerserker.webp">
+    Berserker
+  </summary>
+  <div class="gear-grid">
+
+<div>
+      <div class="gear-title">Manmode</div>
+      <img src="sets/visionmaker/BerserkerWeapon.png" alt="Manmode">
+    </div>
+
+<div>
+      <div class="gear-title">Steelgaze Rageplate</div>
+      <img src="sets/visionmaker/BerserkerChest.png" alt="Steelgaze Rageplate">
+    </div>
+<div>
+      <div class="gear-title">Walk of the Watch</div>
+      <img src="sets/visionmaker/PlateBoots.png" alt="Walk of the Watch">
+    </div>
+<div>
+      <div class="gear-title">Trancebreakers</div>
+      <img src="sets/visionmaker/PlateGloves.png" alt="Trancebreakers">
+    </div>
+
+
+
+  </div>
+</details>
+
+
+<!-- Sorcerer -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconSorcerer.webp">
+    Sorcerer
+  </summary>
+  <div class="gear-grid">
+
+    <div >
+      <div class="gear-title">Orbicular</div>
+      <img src="sets/visionmaker/SorcererWeapon.png" alt="Orbicular">
+    </div>
+
+    <div >
+      <div class="gear-title">Firesight Robe</div>
+      <img src="sets/visionmaker/SorcererChest.png" alt="Firesight Robe">
+    </div>
+    <div >
+      <div class="gear-title">Visionwalkers</div>
+      <img src="sets/visionmaker/ClothBoots.png" alt="Visionwalkers">
+    </div>
+    <div >
+      <div class="gear-title">Visionweavers</div>
+      <img src="sets/visionmaker/ClothGloves.png" alt="Visionweavers">
+    </div>
+
+
+
+  </div>
+</details>
+
+<!-- Archer -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconArcher.webp">
+    Archer
+  </summary>
+  <div class="gear-grid">
+
+<div>
+      <div class="gear-title">Visionary’s Reach</div>
+      <img src="sets/visionmaker/ArcherWeapon.png" alt="Visionary’s Reach">
+    </div>
+
+<div>
+      <div class="gear-title">Dreamshot Vest</div>
+      <img src="sets/visionmaker/ArcherChest.png" alt="Dreamshot Vest">
+    </div>
+<div>
+      <div class="gear-title">Dreamer’s Boots</div>
+      <img src="sets/visionmaker/LeatherBoots.png" alt="Dreamer’s Boots">
+    </div>
+<div>
+      <div class="gear-title">Scryhands</div>
+      <img src="sets/visionmaker/LeatherGloves.png" alt="Scryhands">
+    </div>
+
+
+
+  </div>
+</details>
+
+
+<!-- Priest -->
+<details class="class-set role-heal">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconPriest.webp">
+    Priest
+  </summary>
+  <div class="gear-grid">
+
+   <div>
+      <div class="gear-title">Revery Delivery</div>
+      <img src="sets/visionmaker/PriestWeapon.png" alt="Revery Delivery">
+    </div>
+
+   <div>
+      <div class="gear-title">Divinesight Robe</div>
+      <img src="sets/visionmaker/PriestChest.png" alt="Divinesight Robe">
+    </div>
+   <div>
+      <div class="gear-title">Visionwalkers</div>
+      <img src="sets/visionmaker/ClothBoots.png" alt="Visionwalkers">
+    </div>
+   <div>
+      <div class="gear-title">Visionweavers</div>
+      <img src="sets/visionmaker/ClothGloves.png" alt="Visionweavers">
+    </div>
+
+
+
+  </div>
+</details>
+
+<!-- Mystic -->
+<details class="class-set role-heal">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconMystic.webp">
+    Mystic
+  </summary>
+  <div class="gear-grid">
+
+   <div>
+      <div class="gear-title">Unfortunate Truth</div>
+      <img src="sets/visionmaker/MysticWeapon.png" alt="Unfortunate Truth">
+    </div>
+
+   <div>
+      <div class="gear-title">Hexsight Robe</div>
+      <img src="sets/visionmaker/MysticChest.png" alt="Hexsight Robe">
+    </div>
+  <div>
+      <div class="gear-title">Visionwalkers</div>
+      <img src="sets/visionmaker/ClothBoots.png" alt="Visionwalkers">
+    </div>
+   <div>
+      <div class="gear-title">Visionweavers</div>
+      <img src="sets/visionmaker/ClothGloves.png" alt="Visionweavers">
+    </div>
+
+ 
+
+  </div>
+</details>
+
+
+</section>
+
+<section id="glossary">
+  <h2>Glossary</h2>
+
+  <h3>Tokens</h3>
+  <div class="glossary-item"><img class="icon" src="icons/MarkOfInception.png" alt=""><strong>Inception Token</strong> – Exchange for Dreamkeeper Set</div>
+  <div class="glossary-item"><img class="icon" src="icons/GlyphToken.png" alt=""><strong>Glyph Token</strong> – Used to unlock or upgrade class glyphs that enhance abilities</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssalMark.png" alt=""><strong>Lesser Abyssal Mark</strong> – Exchange for Abyss Gloves and Boots</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssalMark.png" alt=""><strong>Greater Abyssal Mark</strong> – Exchange for Abyss Weapon and Chest</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssalMark.png" alt=""><strong>Mark of the Phoenix</strong> – Exchange for Mayhem Chest or Pristine Phoenix Beaks needed to craft Visionmaker Set</div>
+
+
+  <h3>Gear Sets</h3>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperChest.png" alt=""><strong>Dreamkeeper Set</strong> – Tier 9, entry-level gear set</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssChest.png" alt=""><strong>Abyss Set</strong> – Tier 10, mid-level gear set</div>
+  <div class="glossary-item"><img class="icon" src="icons/MayhemChest.png" alt=""><strong>Mayhem Set/Chest</strong> – Tier 10, High-level gear set (Chest piece only)</div>
+  <div class="glossary-item"><img class="icon" src="icons/RegentChest.png" alt=""><strong>Regent Set</strong> – Tier 10, High-level gear set</div>
+
+  <h3>Jewelry</h3>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperEarring.png" alt=""><strong>Dangling Fork</strong> – Entry-level earring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperEarring.png" alt=""><strong>Caged Raindrop</strong> – Mid-level earring</div>
+  <div class="glossary-item"><img class="icon" src="icons/PhoenixEar.png" alt=""><strong>Phoenix Ear</strong> – High-end/BiS earring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperRing.png" alt=""><strong>Sunder Ring</strong> – Entry-level ring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperRing.png" alt=""><strong>Sprocket Ring</strong> – Mid-level ring</div>
+  <div class="glossary-item"><img class="icon" src="icons/PhoenixSignet.png" alt=""><strong>Phoenix Signet</strong> – High-end/BiS ring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperNecklace.png" alt=""><strong>Thulsan Curio</strong> – Entry-level necklace</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperNecklace.png" alt=""><strong>Chain of Deceit</strong> – Mid-level necklace</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperNecklace.png" alt=""><strong>Crown Jewels</strong> – High-end/BiS necklace</div>
+
+  <h3>Enchanting Materials</h3>
+  <div class="glossary-item"><img class="icon" src="icons/MarvelousAlkahest.png" alt=""><strong>Marvelous Alkahest</strong> – Enchanting material used to upgrade gear</div>
+  <div class="glossary-item"><img class="icon" src="icons/MarvelousFeedstock.png" alt=""><strong>Marvelous Feedstock</strong> – Enchanting material used to upgrade Tier 10 gear (e.g., Abyss, Mayhem, Regent, and Visionmaker)</div>
+  <div class="glossary-item"><img class="icon" src="icons/MasterEnigmaticScroll.png" alt=""><strong>Master Enigmatic Scroll</strong> – Converts unidentified gear into an enigmatic state so it can become masterworked or have its bonus stats rerolled</div>
+  <div class="glossary-item"><img class="icon" src="icons/IntricateIdentificationScroll.png" alt=""><strong>Intricate Identification Scroll</strong> – Identifies enigmatic gear, revealing the possibility of becoming masterworked and/or applying its randomized bonus stats</div>
+  <div class="glossary-item"><img class="icon" src="icons/Tier9Feedstock.png" alt=""><strong>Tier 9 Feedstock</strong> – Base enchanting material used to upgrade Tier 9 gear (e.g., Dreamkeeper)</div>
+
+  <h3>Visionmaker Crafting Materials</h3>
+  <div class="glossary-item"><img class="icon" src="icons/DesignWeapon.png" alt=""><strong>Visionmaker Designs</strong> – Crafting blueprints for Visionmaker Set</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamBindings.png" alt=""><strong>Dream Bindings</strong> – Material used to craft Visionmaker Armor</div>
+  <div class="glossary-item"><img class="icon" src="icons/Fanesteel.png" alt=""><strong>Fanesteel</strong> – Material used to craft Visionmaker Weapons</div>
+  <div class="glossary-item"><img class="icon" src="icons/PristinePhoenixBeak.png" alt=""><strong>Pristine Phoenix Beak</strong> – Material used to craft Visionmaker Set</div>
+
+<div class="glossary-item"><img class="icon" src="icons/KaelicSpark.png" alt=""><strong>Kaelic Spark</strong> – Rare gathering catalyst used to craft Visionmaker equipment</div>
+<div class="glossary-item"><img class="icon" src="icons/CyasmicOil.png" alt=""><strong>Cyasmic Oil</strong> – Argon-derived oil used in Visionmaker crafting</div>
+<div class="glossary-item"><img class="icon" src="icons/ArgonVitriol.png" alt=""><strong>Argon Vitriol</strong> – Hardened argon residue used to craft Visionmaker equipment</div>
+<div class="glossary-item"><img class="icon" src="icons/ChaosBlock.png" alt=""><strong>Chaos Block</strong> – Condensed nexus energy used in Visionmaker crafting</div>
+<div class="glossary-item"><img class="icon" src="icons/VictorsTrophy.png" alt=""><strong>Victor’s Trophy</strong> – PvP token used to craft Visionmaker gear</div>
+
+  <h3>Consumables</h3>
+  <div class="glossary-item"><img class="icon" src="icons/NostrumOfEnergyV.png" alt=""><strong>Nostrum of Energy</strong> – Consumable that temporarily boosts attack speed</div>
+  <div class="glossary-item"><img class="icon" src="icons/OnslaughtScrollCritFactorV.png" alt=""><strong>Onslaught Scroll</strong> – Consumable that temporarily boosts a specific stat (e.g., attack speed, crit factor, crit power)</div>
+
+
+</section>
+
+
+
+</div>
+<footer>Old School TERA PvE Guide</footer>
 
 <script>
-  function toggleCollapsible(id) {
-    const content = document.getElementById(id + 'Content');
-    const icon = document.getElementById(id + 'Icon');
 
-    if (!content || !icon) return;
+const triggers = document.querySelectorAll('.tooltip-trigger');
 
-    if (content.classList.contains('open')) {
-      content.classList.remove('open');
-      icon.classList.remove('open');
-    } else {
-      content.classList.add('open');
-      icon.classList.add('open');
-    }
-  }
+triggers.forEach(trigger => {
 
-  function rawValue(gear, base, bonus, enchant) {
-    if (!base || !bonus || !enchant || base <= 0) return null;
-    const B = enchant;
-    const D = base;
-    const E = bonus;
-    let factor = 0.045;
-    if (gear === 'weapon') factor = 0.03;
-    const expected = Math.floor(D * factor * B);
-    return (E - expected) / D;
-  }
+  const tooltip = trigger.querySelector('.tooltip');
 
-  function mapRawToPercent(val) {
-    if (val === null || !isFinite(val)) return null;
-    if (val < 0.01) return 1;
-    if (val < 0.025) return 2;
-    return 3;
-  }
-
-  function updateCalc(card) {
-    const gear       = card.getAttribute('data-gear');
-    const baseInput  = card.querySelector('.base-input');
-    const bonusInput = card.querySelector('.bonus-input');
-    const enchantSel = card.querySelector('.enchant-input');
-    const resultEl   = card.querySelector('[data-result]');
-
-    const base    = parseFloat(baseInput.value);
-    const bonus   = parseFloat(bonusInput.value);
-    const enchant = parseFloat(enchantSel.value);
-
-    card.classList.remove('roll-1', 'roll-2', 'roll-3');
-
-    if (!base || !bonus || base <= 0 || bonus <= 0 || !isFinite(enchant)) {
-      resultEl.textContent = '—';
-      resultEl.className = 'result-chip neutral';
-      return;
-    }
-
-    const rv = rawValue(gear, base, bonus, enchant);
-    const rollPercent = mapRawToPercent(rv);
-
-    if (!rollPercent) {
-      resultEl.textContent = '—';
-      resultEl.className = 'result-chip neutral';
-      return;
-    }
-
-    resultEl.textContent = rollPercent + '%';
-
-    if (rollPercent === 3) {
-      resultEl.className = 'result-chip green';
-      card.classList.add('roll-3');
-    } else if (rollPercent === 2) {
-      resultEl.className = 'result-chip orange';
-      card.classList.add('roll-2');
-    } else if (rollPercent === 1) {
-      resultEl.className = 'result-chip red';
-      card.classList.add('roll-1');
-    } else {
-      resultEl.className = 'result-chip neutral';
-    }
-  }
-
-  document.querySelectorAll('[data-calc]').forEach(card => {
-    const inputs = card.querySelectorAll('.base-input, .bonus-input, .enchant-input');
-    ['input', 'change'].forEach(evt => {
-      inputs.forEach(input => {
-        input.addEventListener(evt, () => updateCalc(card));
-      });
-    });
+  trigger.addEventListener('mouseenter', () => {
+    tooltip.style.display = 'block';
   });
+
+  trigger.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+  });
+
+  trigger.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY + 15) + 'px';
+  });
+
+});
+
 </script>
 </body>
 </html>
