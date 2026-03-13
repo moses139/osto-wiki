@@ -1,107 +1,2677 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>OSTO Wiki Dev</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Old School TERA – PvE Progression Guide</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-/* Dark theme */
+/* ==================================================
+   BASE STYLES
+================================================== */
+html { scroll-behavior: smooth; }
 body {
-    font-family: Arial, sans-serif;
-    max-width: 900px;
-    margin: 40px auto;
-    line-height: 1.6;
-    background: #121212;
-    color: #ddd;
-}
-
-/* Header */
-header {
-    text-align: center;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    margin-bottom: 30px;
-}
-
-header h1 {
-    font-size: 2.8em;
-    color: #6db8ff;
-    margin: 0 0 10px 0;
-    text-shadow: 1px 1px 4px #000;
-}
-
-header p {
-    font-size: 1.2em;
-    color: #aaa;
+    background: #0b0c10;
+    color: #d8d8d8;
+    font-family: 'Open Sans', sans-serif;
     margin: 0;
 }
+section { margin-bottom: 60px; }
+ul { padding-left: 20px; }
 
-/* Section headings */
+/* ==================================================
+   TYPOGRAPHY
+================================================== */
 h2 {
-    margin-top: 40px;
-    border-bottom: 2px solid #333;
-    padding-bottom: 5px;
-    color: #6db8ff;
+    border-bottom: 1px solid #333;
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    font-size: 35px;
 }
+h3 { color: #e5c76b; margin-top: 15px; }
+h4 { color: #e5966b; margin-top: 15px; }
 
-/* Link cards */
-ul {
-    list-style: none;
-    padding: 0;
+/* ==================================================
+   HEADER
+================================================== */
+header {
+    background: linear-gradient(180deg, #111, #0b0c10);
+    border-bottom: 1px solid #333;
+    padding: 40px 20px;
+    text-align: center;
+}
+header h1 {
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    font-size: 40px;
+    letter-spacing: 2px;
     margin: 0;
 }
-
-li {
-    margin: 12px 0;
+header p.subtitle {
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    font-size: 35px;
+    letter-spacing: 2px;
+    margin: 10px;
 }
 
-a {
+/* ==================================================
+   CONTAINER / LAYOUT
+================================================== */
+.container { margin: auto; max-width: 1100px; padding: 40px 20px; }
+.dungeon_gallery {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 10px;
+}
+
+/* ==================================================
+   CARDS / PANELS
+================================================== */
+.card, .dungeon {
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 18px 20px;
+}
+.card {
+    background: #121317;
+    border: 1px solid #2a2c33;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+}
+.dungeon {
+    background: #14161c;
+    border: 1px solid #2e313a;
+}
+.dungeon strong { color: #fff; }
+
+/* ==================================================
+   CALLOUTS
+================================================== */
+.tip, .goal, .warning {
+    background: #111;
+    margin: 20px 0;
+    padding: 15px;
+}
+.tip { border-left: 4px solid #4caf50; }
+.goal { border-left: 4px solid #fa003f; }
+.warning { border-left: 4px solid #d4af37; }
+
+/* ==================================================
+   ICONS
+================================================== */
+.icon {
+    border-radius: 3px;
+    height: 22px; width: 22px;
+    margin-right: 6px;
+    vertical-align: middle;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.icon:hover {
+    transform: scale(1.4);
+    box-shadow: 0 0 6px rgba(212,175,55,0.8);
+    z-index: 2;
+}
+
+/* ==================================================
+   DUNGEON IMAGES
+================================================== */
+.dungeon_pic {
+    border: 1px solid #333;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+.dungeon_pic:hover {
+    transform: scale(1.35);
+    box-shadow: 0 0 15px rgba(0,0,0,0.9);
+    z-index: 5;
+}
+
+/* ==================================================
+   LISTS
+================================================== */
+.reward-list li,
+.progression-list li,
+.glossary-item { margin-bottom: 6px; }
+.progression-list { list-style: none; margin: 10px 0 0; padding-left: 0; }
+.progression-list img { display: block; height: auto; margin: 0 auto 6px; max-width: 100%; }
+
+/* ==================================================
+   TABLES
+================================================== */
+.roadmap-table, .vm-table { border-collapse: collapse; margin-top: 20px; width: 100%; }
+.roadmap-table th, .vm-table th {
+    background: linear-gradient(180deg, #111, #0b0c10);
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    padding: 12px 10px;
+    vertical-align: top;
+}
+.roadmap-table td, .vm-table td {
+    background: #121317;
+    color: #d8d8d8;
+    border: 1px solid #2a2c33;
+    padding: 12px 10px;
+    vertical-align: top;
+}
+.vm-table td:first-child { text-align: left; }
+
+/* ==================================================
+   TABLE OF CONTENTS
+================================================== */
+.toc-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    list-style: none;
+    margin: 0; padding: 0;
+}
+@media (max-width:700px){ .toc-grid{ grid-template-columns: repeat(2,1fr); } }
+.toc-button {
     display: block;
-    background: #1e1e1e;
-    color: #ddd;
-    padding: 14px 18px;
-    border-radius: 8px;
+    background: radial-gradient(circle at top left,#2e3440,#151821);
+    border: 1px solid #444;
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    color: #e5e5e5;
+    font-size: .9rem;
+    letter-spacing: .03em;
+    padding: 10px 14px;
     text-decoration: none;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+    transition: all .15s ease;
+}
+.toc-button strong { color: #d4af37; }
+.toc-button:hover {
+    background: radial-gradient(circle at top left,#3b4252,#191c26);
+    border-color: #d4af37;
+    box-shadow: 0 0 10px rgba(212,175,55,0.6);
+    transform: translateY(-1px);
 }
 
-a:hover {
-    background: #2a2a2a;
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+/* ==================================================
+   DIFFICULTY STARS / ITEM LEVEL
+================================================== */
+.difficulty { display: inline-flex; align-items: center; gap: 2px; font-size: 1rem; }
+.difficulty .star { color: #f1c40f; font-size: 1.1rem; }
+.difficulty .star.empty { color: #555; }
+.item-level { color: #5dade2; font-weight: 600; margin-left: 6px; }
+
+/* ==================================================
+   TOOLTIP SYSTEM
+================================================== */
+.item { display: flex; align-items: center; gap: 8px; }
+.item img { width: 32px; height: 32px; border: 1px solid #555; border-radius: 4px; }
+.tooltip {
+    position: fixed;
+    display: none;
+    background: #1a1a1a;
+    border: 2px solid #666;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 0 12px black;
+    z-index: 999;
+    pointer-events: none;
+    max-width: 600px;
+}
+.tooltip img { width: 42px; height: 42px; margin-bottom: 6px; }
+.tooltip-title { font-weight: bold; color: white; margin-bottom: 6px; }
+.tooltip-desc { color: #4da6ff; margin-bottom: 10px; }
+.tooltip-header { font-weight: bold; margin-top: 6px; }
+.tooltip-entry { color: #bbb; margin-left: 6px; margin-bottom: 2px; }
+
+/* ==================================================
+   CLASS SETS (MAIN COLLAPSIBLES)
+================================================== */
+.class-set {
+    margin-bottom: 14px;
+    border-radius: 6px;
+    border: 1px solid #2a2c33;
+    background: #111;
+    overflow: hidden;
+}
+.class-set summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    letter-spacing: .4px;
+}
+.class-set summary:hover { background: #1b1d24; }
+.class-icon { width: 30px; height: 30px; }
+
+/* ROLE COLORS */
+.role-heal { border-left: 4px solid #3bbf6b; }
+.role-tank { border-left: 4px solid #3b7ddb; }
+.role-dps { border-left: 4px solid #d94b4b; }
+.role-hybrid { border-left: 4px solid #9b59b6; }
+.role-heal summary { color: #6df7a0; }
+.role-tank summary { color: #82b8ff; }
+.role-dps summary { color: #ff8e8e; }
+.role-hybrid summary { color: #d299f7; }
+
+/* ==================================================
+   GEAR GRID
+================================================== */
+.gear-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 20px;
+    align-items: start;
+    padding: 10px;
+}
+.gear-grid > div { text-align: center; transition: transform .3s ease, box-shadow .3s ease; }
+.gear-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #d4af37;
+    margin-bottom: 8px;
+    font-family: 'Cinzel', serif;
+}
+.gear-grid img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform .3s ease, border .3s ease, box-shadow .3s ease;
+}
+.gear-grid img:hover {
+    transform: scale(1.05);
+    border: 2px solid #d4af37;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 }
 
-/* Footer */
+/* ==================================================
+   SUB-COLLAPSIBLES (GEAR TIERS)
+================================================== */
+.gear-tier {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+.gear-tier summary {
+    padding: 8px 12px;
+    background: #151515;
+    border-left: 3px solid #666;
+    border-radius: 4px;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+}
+.gear-tier[open] { background: #101010; padding: 10px; border-radius: 6px; }
+.gear-tier summary::before { content: "⚔ "; opacity: 0.7; }
+.gear-tier summary:hover { color: #ffd700; }
+
+/* ==================================================
+   DETAILS ARROWS (MAIN + SUB)
+================================================== */
+summary { list-style: none; cursor: pointer; }
+summary::-webkit-details-marker { display: none; }
+summary::after {
+    content: "▸";
+    float: right;
+    font-size: 14px;
+    transition: transform 0.2s ease;
+}
+details[open] > summary::after { transform: rotate(90deg); }
+
+/* ==================================================
+   FOOTER / BANNERS
+================================================== */
 footer {
-    margin-top: 60px;
+    border-top: 1px solid #333;
+    color: #777;
+    padding: 30px;
     text-align: center;
-    font-size: 0.9em;
-    color: #888;
 }
+.banner-img { display: block; margin: 0 auto; max-width: 100%; }
 </style>
 </head>
 
 <body>
-
 <header>
-<h1>OSTO Wiki Dev</h1>
-<p>Guides and tools for Old School TERA Online</p>
+  <h1>Old School TERA Online (OSTO)</h1>
+  <p class="subtitle">PvE Progression Guide</p>
 </header>
+<div class="container">
 
-<h2>Guides</h2>
-<ul>
-<li><a href="guide/pve-progression.html">PvE Progression Guide</a></li>
-</ul>
+<section><center>
 
-<h2>Tools</h2>
-<ul>
-<li><a href="guide/misc/bonus-checker.html">Gear Bonus Checker</a></li>
-</ul>
+  <div class="card">
+    <h2>Congratulations on Level 60!</h2>
+    <p><strong>You have reached endgame!</strong><br>This guide will walk you through the PvE gearing path from your first set of gear to the hardest dungeons in Old School TERA.</p>
+  </div>
+</center></section>
 
-<footer>
-&copy; 2026 OSTO Wiki Dev.
-</footer>
+<!-- TABLE OF CONTENTS -->
+<section>
+  <h2>Contents</h2>
+  <div class="card">
+    <ul class="toc-grid">
+      <li><a class="toc-button" href="#roadmap">Roadmap &amp; Progression</a></li>
+      <li><a class="toc-button" href="#summary">Dungeon &amp; Loot Summary</a></li>
+      <li><a class="toc-button" href="#dreamkeeper">Starter Gear (Dreamkeeper)</a></li>
+      <li><a class="toc-button" href="#kn">Beginner Dungeon – KN</a></li>
+      <li><a class="toc-button" href="#bt">Normal Mode Dungeons</a></li>
+      <li><a class="toc-button" href="#bth">Hard Mode – Tier 1</a></li>
+      <li><a class="toc-button" href="#ach">Hard Mode – Tier 2</a></li>
+      <li><a class="toc-button" href="#mch">Final Challenge – MCH</a></li>
+      <li><a class="toc-button" href="#visionmaker">BiS Gear (Visionmaker)</a></li>
+	   <li><a class="toc-button" href="#class-gear-sets">Class Gear Sets</a></li>
+      <li><a class="toc-button" href="#glossary">Glossary</a></li>
+    </ul>
+  </div>
+</section>
 
+<!-- ROADMAP / PROGRESSION OVERVIEW -->
+<section id="roadmap">
+  <h2>Roadmap &amp; Progression</h2>
+  <div class="card">
+    <h3>Dungeon Progression</h3>
+    <ul class="progression-list">
+      <li>
+        <img src="banners/DungeonProgression.png" alt="KN &gt; BT &gt; FoK &gt; AC &gt; MC &gt; BTH &gt; FoKH &gt; ACH &gt; KNH &gt; MCH" class="banner-img">
+      </li>
+    </ul>
+
+    <h3>Gear Progression</h3>
+    <ul class="progression-list">
+      <li>
+        <img src="banners/GearProgression.png" alt="Dreamkeeper &gt; Abyss &gt; Mayhem / Regent &gt; Visionmaker" class="banner-img">
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- SUMMARY TABLE -->
+<section id="summary">
+  <h2>Dungeon &amp; Loot Summary</h2>
+  <table class="roadmap-table">
+    <thead>
+      <tr>
+        <th>Dungeon</th>
+        <th>Gear Drops</th>
+        <th>Tokens</th>
+        <th>Jewelry</th>
+        <th>Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- SUMMARY - Kelsaik's Nest (Normal) -->
+      <tr>
+        <th scope="row"><a href="#kn" style="color:inherit;text-decoration:underline;">KN</a></th>
+        <td>
+          <img class="icon" src="icons/DreamkeeperWeapon.png" alt="">Dreamkeeper Weapon<br>
+          <img class="icon" src="icons/DreamkeeperChest.png" alt="">Dreamkeeper Chest<br>
+          <img class="icon" src="icons/DreamkeeperGloves.png" alt="">Dreamkeeper Gloves<br>
+          <img class="icon" src="icons/DreamkeeperBoots.png" alt="">Dreamkeeper Boots
+        </td>
+        <td>
+          <img class="icon" src="icons/MarkOfInception.png" alt="">Inception<br>
+          <img class="icon" src="icons/GlyphToken.png" alt="">Glyph Token<br>
+          <img class="icon" src="icons/SupplyToken.png" alt="">Supply Token
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperEarring.png" alt="">Entry-level Earring<br>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Entry-level Necklace<br>
+          <img class="icon" src="icons/DreamkeeperRing.png" alt="">Entry-level Ring
+        </td>
+        <td>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Balder's Temple (Normal) -->
+      <tr>
+        <th scope="row"><a href="#bt" style="color:inherit;text-decoration:underline;">BT</a></th>
+        <td>-</td>
+        <td><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Fane of Kaprima (Normal) -->
+      <tr>
+        <th scope="row"><a href="#fok" style="color:inherit;text-decoration:underline;">FoK</a></th>
+        <td>-</td>
+        <td><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Argon Corpus (Normal) -->
+      <tr>
+        <th scope="row"><a href="#ac" style="color:inherit;text-decoration:underline;">AC</a></th>
+        <td>-</td>
+        <td><img class="icon" src="icons/AbyssalMark.png" alt="">Greater Abyssal Mark</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/DesignChest.png" alt="">Visionmaker Armor Design*<br>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock<br>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Manaya's Core (Normal) -->
+      <tr>
+        <th scope="row"><a href="#mc" style="color:inherit;text-decoration:underline;">MC</a></th>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/DesignWeapon.png" alt="">Visionmaker Weapon Design*<br>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Balder's Temple (Hard) -->
+      <tr>
+        <th scope="row"><a href="#bth" style="color:inherit;text-decoration:underline;">BTH</a></th>
+        <td>
+          <img class="icon" src="icons/AbyssGloves.png" alt="">Abyss Gloves
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (x2)
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Mid-level Necklace<br>
+          <img class="icon" src="icons/DreamkeeperRing.png" alt="">Mid-level Ring
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamBindings.png" alt="">Dream Bindings*<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Fane of Kaprima (Hard) -->
+      <tr>
+        <th scope="row"><a href="#fokh" style="color:inherit;text-decoration:underline;">FoKH</a></th>
+        <td>
+          <img class="icon" src="icons/AbyssBoots.png" alt="">Abyss Boots
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (x2)
+        </td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Mid-level Necklace<br>
+          <img class="icon" src="icons/DreamkeeperEarring.png" alt="">Mid-level Earring
+        </td>
+        <td>
+          <img class="icon" src="icons/Fanesteel.png" alt="">Fanesteel*<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Argon Corpus (Hard) -->
+      <tr>
+        <th scope="row"><a href="#ach" style="color:inherit;text-decoration:underline;">ACH</a></th>
+        <td>
+          <img class="icon" src="icons/AbyssWeapon.png" alt="">Abyss Weapon<br>
+          <img class="icon" src="icons/AbyssChest.png" alt="">Abyss Chest
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Greater Abyssal Mark (x2)
+        </td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Kelsaik's Nest (Hard) -->
+      <tr>
+        <th scope="row"><a href="#knh" style="color:inherit;text-decoration:underline;">KNH</a></th>
+        <td>
+          <img class="icon" src="icons/MayhemChest.png" alt="">Mayhem Chest
+        </td>
+        <td>
+          <img class="icon" src="icons/AbyssalMark.png" alt="">Mark of the Phoenix
+        </td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/PristinePhoenixBeak.png" alt="">Pristine Phoenix Beak*<br>
+          <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll<br>
+          <img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock<br>
+          <img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest
+        </td>
+      </tr>
+
+      <!-- SUMMARY - Manaya's Core (Hard) -->
+      <tr>
+        <th scope="row"><a href="#mch" style="color:inherit;text-decoration:underline;">MCH</a></th>
+        <td>
+          <img class="icon" src="icons/RegentWeapon.png" alt="">Regent Weapon<br>
+          <img class="icon" src="icons/RegentChest.png" alt="">Regent Chest<br>
+          <img class="icon" src="icons/RegentGloves.png" alt="">Regent Gloves<br>
+          <img class="icon" src="icons/RegentBoots.png" alt="">Regent Boots
+        </td>
+        <td>-</td>
+        <td>
+          <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">BiS Necklace<br>
+          <img class="icon" src="icons/PhoenixEar.png" alt="">BiS Earring<br>
+          <img class="icon" src="icons/PhoenixSignet.png" alt="">BiS Ring
+        </td>
+        <td>
+          <img class="icon" src="icons/ShandrasQuill.png" alt="">Shandra's Quill*
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p align="right">
+    *Needed for crafting
+    <a href="#visionmaker" style="color:#e5c76b; text-decoration:underline;">
+      Visionmaker Gear
+    </a>
+  </p>
+</section>
+
+<section aria-label="Guide banner">
+  <div class="card">
+    <img src="banners/GuideBanner.png" alt="Guide section banner" class="banner-img">
+  </div>
+</section>
+
+<!-- PART 1 - DREAMKEEPER -->
+<section id="dreamkeeper">
+  <h2>Part 1 — Starter Gear (Dreamkeeper)</h2>
+  <div class="card">
+    <h3>Inception Tokens</h3>
+    <p>After reaching level 60 you will receive a <img class="icon" src="icons/ParcelPost.png" alt="">Parcel Post containing materials used for early endgame progression.</p>
+
+    <p>Your endgame PvE journey begins with <strong><img class="icon" src="icons/MarkOfInception.png" alt="">Inception Tokens</strong>. These allow you to purchase your first PvE gear and other essential progression items from the Inception Shop.</p>
+
+    <h4>What to Buy First</h4>
+    <ol>
+      <li>
+        <img class="icon" src="icons/DreamkeeperWeapon.png" alt="">
+        <img class="icon" src="icons/DreamkeeperChest.png" alt="">
+        <img class="icon" src="icons/DreamkeeperGloves.png" alt="">
+        <img class="icon" src="icons/DreamkeeperBoots.png" alt="">
+        <img class="icon" src="icons/DreamkeeperEarring.png" alt="">
+        <img class="icon" src="icons/DreamkeeperNecklace.png" alt="">
+        <strong>Dreamkeeper Set</strong> – Your first PvE gear set. Buy this first.
+      </li>
+      <li>
+        <img class="icon" src="icons/GlyphToken.png" alt=""><strong>Glyph Tokens</strong> – Used to unlock glyphs that enhance your class abilities.
+      </li>
+    </ol>
+
+    <h4>Farming Inception Tokens</h4>
+    <p>Once you purchase your first Dreamkeeper piece, you will need more <img class="icon" src="icons/MarkOfInception.png" alt="">Inception Tokens (or gear drops) to complete the full set. Both can be acquired from Kelsaik's Nest (Normal).</p>
+  </div>
+  <div class="tip">Tip: <strong>Weapons</strong> &gt; <strong>Gloves</strong> &gt; <strong>Chest</strong> &gt; <strong>Boots</strong>. Since Weapon and Gloves contribute to <span style="color:#FFB6B6">damage output</span> whereas Chest and Boots provide <span style="color:#ADD8E6">defense</span>, it's typically best to prioritize obtaining/enchanting your Weapon first, then Gloves, then Chest, then Boots.</div>
+</section>
+
+<!-- PART 2 - BEGINNER DUNGEONS -->
+<section id="kn">
+  <h2>Part 2 — Beginner Dungeons</h2>
+  <div class="card">
+    <h3>Kelsaik's Nest (Normal) [KN]</h3>
+    <p>Queue for this dungeon using the <img class="icon" src="icons/InstanceMatching.png" alt="">Instance Matching system, recruit others via <span style="font-family:monospace;color:#87cefa;">LFG (Default="Y" Key)</span>, and/or request help from other players via <span style="font-family:monospace;color:#FFEB2A;">Global Chat (/c)</span>.</p>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 124)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemy: Kelsaik</li>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/DreamkeeperWeapon.png" alt="">+6 Dreamkeeper Weapon</li>
+          <li><img class="icon" src="icons/DreamkeeperChest.png" alt="">+6 Dreamkeeper Chest</li>
+          <li><img class="icon" src="icons/DreamkeeperGloves.png" alt="">+6 Dreamkeeper Gloves</li>
+          <li><img class="icon" src="icons/DreamkeeperBoots.png" alt="">+6 Dreamkeeper Boots</li>
+          <li><img class="icon" src="icons/DreamkeeperEarring.png" alt="">Caged Raindrop</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Thulsan Curio</li>
+          <li><img class="icon" src="icons/DreamkeeperRing.png" alt="">Sunder Ring</li>
+          <li><img class="icon" src="icons/MarkOfInception.png" alt="">Inception Token</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+          <li><img class="icon" src="icons/SupplyToken.png" alt="">Supply Token</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="goal">Run Kelsaik's Nest repeatedly until your Dreamkeeper Set is complete.</div>
+</section>
+
+<!-- PART 3 - NORMAL MODE DUNGEONS -->
+<section id="bt">
+  <h2>Part 3 — Normal Mode Dungeons</h2>
+  <p>With your Dreamkeeper set complete, begin farming Normal Mode dungeons for enchanting materials.</p>
+
+  <!-- DETAILS - Balder's Temple (Normal) -->
+  <div class="dungeon">
+    <h3>Balder's Temple (Normal) [BT]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 138)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Kakun, Watcher of the Garden</li>
+        <li>Lagreah, Protector of the Garden <u>and/or</u> Grig, Keeper of Flame</li>
+        <li>Glaciernus, the Frostbinder</li>
+        <li>Auricadis, Guardian of the Relic</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- DETAILS - Fane of Kaprima (Normal) -->
+  <div class="dungeon" id="fok">
+    <h3>Fane of Kaprima (Normal) [FoK]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 139)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Pyrvathas, Infernal Gatekeeper</li>
+        <li>Agarta, Syndicate Battlemaster</li>
+        <li>Kornus, Champion of Kaprima</li>
+        <li>Kaprima, Demon Reaver</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- DETAILS - Argon Corpus (Normal) -->
+  <div class="dungeon" id="ac">
+    <h3>Argon Corpus (Normal) [AC]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 140)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Cygnus, Fist of Manaya</li>
+        <li>Halveterak Overseer, Cyanoguard</li>
+        <li>Lokmar Sorgalur, Beholder</li>
+        <li>Meldita, Eye of Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/DesignChest.png" alt="">Visionmaker Chest Design</li>
+          <li><img class="icon" src="icons/DesignGloves.png" alt="">Visionmaker Gloves Design</li>
+          <li><img class="icon" src="icons/DesignBoots.png" alt="">Visionmaker Boots Design</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Greater Abyssal Mark (for Abyss Weapon and Chest)</li>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- DETAILS - Manaya's Core (Normal) -->
+  <div class="dungeon" id="mc">
+    <h3>Manaya's Core (Normal) [MC]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ManayasCore1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 141)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Hrathgol</li>
+        <li>Melkatran</li>
+        <li>Shandra Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/DesignWeapon.png" alt="">Visionmaker Weapon Design</li>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/Tier9Feedstock.png" alt="">Tier 9 Feedstock</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="goal">
+    Run these dungeons repeatedly until your Dreamkeeper Set is enchanted to at least +9.
+    For best results in future Hard Modes, use <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scrolls and <img class="icon" src="icons/IntricateIdentificationScroll.png" alt="">Intricate Identification Scrolls to enchant to +12.
+  </div>
+</section>
+
+<!-- PART 4 - HARD MODE TIER 1 -->
+<section id="bth">
+  <h2>Part 4 — Hard Mode Dungeons (Tier 1)</h2>
+  <div class="tip">Tip: Clear Normal Mode consistently before attempting Hard Mode. Bring consumables (like <img class="icon" src="icons/OnslaughtScrollCritFactorV.png" alt="">Onslaught Scrolls and <img class="icon" src="icons/NostrumOfEnergyV.png" alt="">Nostrums of Energy) and learn dungeon mechanics.</div>
+
+  <!-- Balder's Temple (Hard) -->
+  <div class="dungeon">
+    <h3>Balder's Temple (Hard Mode) [BTH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/BaldersTemple3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 142)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Kakun, Watcher of the Garden</li>
+        <li>Nightmare Lagreah, Protector of the Garden <u>and/or</u> Nightmare Grig, Keeper of Flame</li>
+        <li>Nightmare Glaciernus, the Frostbinder</li>
+        <li>Nightmare Auricadis, Guardian of the Relic</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssGloves.png" alt="">Abyss Gloves</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">2x Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/DreamkeeperRing.png" alt="">Sprocket Ring</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Chain of Deceit</li>
+          <li><img class="icon" src="icons/DreamBindings.png" alt="">Dream Bindings</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Fane of Kaprima (Hard) -->
+  <div class="dungeon" id="fokh">
+    <h3>Fane of Kaprima (Hard Mode) [FoKH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/FaneOfKaprima3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 143)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Pyrvathas, Infernal Gatekeeper</li>
+        <li>Nightmare Agarta, Syndicate Battlemaster</li>
+        <li>Nightmare Kornus, Champion of Kaprima</li>
+        <li>Nightmare Kaprima, Demon Reaver</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssBoots.png" alt="">Abyss Boots</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">2x Lesser Abyssal Mark (for Abyss Gloves and Boots)</li>
+          <li><img class="icon" src="icons/DreamkeeperEarring.png" alt="">Dangling Fork</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Chain of Deceit</li>
+          <li><img class="icon" src="icons/Fanesteel.png" alt="">Fanesteel</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- PART 5 - HARD MODE TIER 2 -->
+<section id="ach">
+  <h2>Part 5 — Hard Mode Dungeons (Tier 2)</h2>
+  <div class="warning">Prepare with optimized glyphs, consumables (especially <strong>Rank V</strong> <img class="icon" src="icons/OnslaughtScrollCritFactorV.png" alt="">Onslaught Scrolls and <img class="icon" src="icons/NostrumOfEnergyV.png" alt="">Nostrums of Energy), and a coordinated group before attempting these dungeons.</div>
+
+  <!-- Argon Corpus (Hard) -->
+  <div class="dungeon">
+    <h3>Argon Corpus (Hard Mode) [ACH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ArgonCorpus3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star empty">★</span>
+      </span>
+      <span class="item-level">(iLvl 144)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Cygnus, Fist of Manaya</li>
+        <li>Nightmare Halveterak Overseer, Cyanoguard</li>
+        <li>Nightmare Lokmar Sorgalur, Beholder</li>
+        <li>Nightmare Meldita, Eye of Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/AbyssWeapon.png" alt="">Abyss Weapon</li>
+          <li><img class="icon" src="icons/AbyssChest.png" alt="">Abyss Chest</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">2x Greater Abyssal Mark (for Abyss Weapon and Chest)</li>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Kelsaik's Nest (Hard) -->
+  <div class="dungeon" id="knh">
+    <h3>Kelsaik's Nest (Hard Mode) [KNH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/KelsaiksNest3.webp" alt="">
+    </div>
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+      </span>
+      <span class="item-level">(iLvl 145)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemy: Nightmare Kelsaik</li>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scroll</li>
+          <li><img class="icon" src="icons/MarvelousAlkahest.png" alt="">Marvelous Alkahest</li>
+          <li><img class="icon" src="icons/PristinePhoenixBeak.png" alt="">Pristine Phoenix Beak</li>
+          <li><img class="icon" src="icons/MarvelousFeedstock.png" alt="">Marvelous Feedstock</li>
+          <li><img class="icon" src="icons/MayhemChest.png" alt="">Mayhem Chest</li>
+          <li><img class="icon" src="icons/AbyssalMark.png" alt="">Mark of the Phoenix (for Mayhem Chest or Pristine Phoenix Beak)</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="goal">
+    Run these dungeons repeatedly until your Abyss/Mayhem Set is enchanted to at least +9.
+    For best results in Manaya's Core (Hard Mode), use <img class="icon" src="icons/MasterEnigmaticScroll.png" alt="">Master Enigmatic Scrolls and <img class="icon" src="icons/IntricateIdentificationScroll.png" alt="">Intricate Identification Scrolls to enchant to +12.
+  </div>
+</section>
+
+<!-- PART 6 - FINAL CHALLENGE -->
+<section id="mch">
+  <h2>Part 6 — The Final Challenge</h2>
+  <div class="warning">This is the ultimate PvE challenge.</div>
+  <div class="dungeon">
+    <h3>Manaya's Core (Hard Mode) [MCH]</h3>
+    <div class="dungeon_gallery">
+      <img class="dungeon_pic" src="dungeons/ManayasCore1.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore2.webp" alt="">
+      <img class="dungeon_pic" src="dungeons/ManayasCore3.webp" alt="">
+    </div>
+
+    <div>
+      Difficulty:
+      <span class="difficulty">
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+        <span class="star" style="color:red;">★</span>
+      </span>
+      <span class="item-level">(iLvl 146)</span>
+    </div>
+    <ul class="reward-list">
+      <li>Enemies:</li>
+      <ol>
+        <li>Nightmare Hrathgol</li>
+        <li>Nightmare Melkatran</li>
+        <li>Nightmare Shandra Manaya</li>
+      </ol>
+      <li>Rewards:
+        <ul>
+          <li><img class="icon" src="icons/RegentWeapon.png" alt="">Regent Weapon</li>
+          <li><img class="icon" src="icons/RegentChest.png" alt="">Regent Chest</li>
+          <li><img class="icon" src="icons/RegentGloves.png" alt="">Regent Gloves</li>
+          <li><img class="icon" src="icons/RegentBoots.png" alt="">Regent Boots</li>
+          <li><img class="icon" src="icons/PhoenixEar.png" alt="">Phoenix Ear</li>
+          <li><img class="icon" src="icons/DreamkeeperNecklace.png" alt="">Crown Jewels</li>
+          <li><img class="icon" src="icons/PhoenixSignet.png" alt="">Phoenix Signet</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+
+<!-- VISIONMAKER -->
+<section id="visionmaker">
+<h2>Part 7 — BiS Gear (Visionmaker)</h2>
+
+<p>
+The Visionmaker Set represents OSTO's <strong>Best-in-Slot (BiS)</strong> equipment for this progression tier. Unlike most endgame gear, Visionmaker gear is not obtained simply from dungeon drops and must instead be <strong>crafted</strong>. </p>
+<p>
+Crafting Visionmaker requires collecting a wide variety of materials from across the game, including high-level PvE dungeons, reputation dailies, PvP rewards, and rare gathering resources. As a result, completing a full Visionmaker set typically requires participation in several different endgame activities. 
+Players must also reach <strong>Artisan-level crafting</strong> in the appropriate profession before they can craft Visionmaker weapons/armor.
+</p>
+
+<h3>Crafting Requirements</h3>
+
+<p><i>(For information on how to acquire each material, hover over/click the material name.)</i></p>
+
+<table class="vm-table">
+
+<tr>
+<th>Materials</th>
+<th>Weapon<br/><img class="icon" src="icons/VisionmakerWeapon.png" alt=""></th>
+<th>Chest<br/><img class="icon" src="icons/VisionmakerChest.png" alt=""></th>
+<th>Gloves<br/><img class="icon" src="icons/VisionmakerGloves.png" alt=""></th>
+<th>Boots<br/><img class="icon" src="icons/VisionmakerBoots.png" alt=""></th>
+<th>Total</th>
+</tr>
+
+
+<!-- Artisan Crafting Requirement -->
+<tr>
+<td>
+  <div class="item tooltip-trigger">
+    <img src="icons/Crafting.png">
+    <span>Crafting Rank</span>
+
+    <div class="tooltip">
+      <img src="icons/Crafting.png">
+
+      <div class="tooltip-title">Artisan Crafting Skill</div>
+      <div class="tooltip-desc">Crafting skill level/rank. See Crafting Menu (Default="J" Key)</div>
+
+      <div class="tooltip-header">Source</div>
+      <div class="tooltip-entry"><span style="color:teal;">Crafting</span>: See crafting vendors in main cities and achieve Artisan-level proficiency in Weaponcrafting or Armorcrafting.</div>
+    
+	      <div class="tooltip-header">OSTO Difference</div>
+      <div class="tooltip-entry"><span style="color:orange;">No Alts/Resets Required</span>: Unlike retail, OSTO allows you to Artisan <strong>all</strong> professions, not just one.</div>
+
+	</div>
+  </div>
+</td>
+<td>Weaponcrafting<br>(Artisan)</td>
+<td>Armorcrafting<br>(Artisan)</td>
+<td>Armorcrafting<br>(Artisan)</td>
+<td>Armorcrafting <br>(Artisan)</td>
+<td><strong>Artisan</strong></td>
+</tr>
+
+<!-- Designs -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/DesignWeapon.png">
+<span>Visionmaker Design</span>
+
+<div class="tooltip">
+<img src="icons/DesignWeapon.png">
+<img src="icons/DesignChest.png">
+<img src="icons/DesignGloves.png">
+<img src="icons/DesignBoots.png">
+
+<div class="tooltip-title">Visionmaker Design</div>
+<div class="tooltip-desc">Use this design to learn the corresponding Visionmaker crafting skill.</div>
+
+<div class="tooltip-header">Weapon:</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Manaya’s Core (Normal) – Rare drop</div>
+<div class="tooltip-entry"><span style="color:orange;">Alliance</span>: Clarag/Durim/Kaigor, Noctenium Society Reputation Merchant (Alliance Territory, Forts): <b>25,000 Noctenium Society credits each</b></div>
+
+<div class="tooltip-header">Chest / Gloves / Boots:</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Argon Corpus (Hard) – Rare drop</div>
+<div class="tooltip-entry"><span style="color:orange;">Alliance</span>: Noctenium Society (Alliance) Vendor: <b>15,000 Noctenium Society credits each<b></div>
+
+</div>
+</div>
+</td>
+
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td><strong>4</strong></td>
+</tr>
+
+<!-- Fanesteel -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/Fanesteel.png">
+<span>Fanesteel</span>
+
+<div class="tooltip">
+<img src="icons/Fanesteel.png">
+
+<div class="tooltip-title">Fanesteel</div>
+<div class="tooltip-desc">[Dropped Material] Metal of demonic origin used to craft Visionmaker weapons.</div>
+
+<div class="tooltip-header">Source</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Fane of Kaprima (Hard)</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Juleor – Killing Spree Quartermaster (Velika)</div>
+</div>
+</div>
+</td>
+<td>500</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td><strong>500</strong></td>
+</tr>
+
+
+<!-- Dream Bindings -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/DreamBindings.png">
+<span>Dream Bindings</span>
+
+<div class="tooltip">
+<img src="icons/DreamBindings.png">
+
+<div class="tooltip-title">Dream Bindings</div>
+<div class="tooltip-desc">[Dropped Material] Strong strips of material used to craft Visionmaker armor.</div>
+
+<div class="tooltip-header">Source</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Balder’s Temple (Hard)</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Surah – Bellicarium Quartermaster (Velika)</div>
+</div>
+</div>
+</td>
+<td>-</td>
+<td>400</td>
+<td>200</td>
+<td>200</td>
+<td><strong>800</strong></td>
+</tr>
+
+
+<!-- Pristine Phoenix Beak -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/PristinePhoenixBeak.png">
+<span>Pristine Phoenix Beak</span>
+
+<div class="tooltip">
+<img src="icons/PristinePhoenixBeak.png">
+
+<div class="tooltip-title">Pristine Phoenix Beak</div>
+<div class="tooltip-desc">Though this beak was violently torn from the head of Kelsaik, fire still crackles around it.</div>
+
+<div class="tooltip-header">Dropped By</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Nightmare Kelsaik – Kelsaik’s Nest (Hard)</div>
+</div>
+</div>
+</td>
+<td>9</td>
+<td>6</td>
+<td>3</td>
+<td>3</td>
+<td><strong>21</strong></td>
+</tr>
+
+
+<!-- Shandra's Quill -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ShandrasQuill.png">
+<span>Shandra’s Quill</span>
+
+<div class="tooltip">
+<img src="icons/ShandrasQuill.png">
+
+<div class="tooltip-title">Shandra’s Quill</div>
+<div class="tooltip-desc">Feather-like fragment dropped by Shandra Manaya. Used to craft Visionmaker equipment.</div>
+
+<div class="tooltip-header">Dropped By</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Nightmare Shandra Manaya – Manaya’s Core (Hard)</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+
+<!-- Kaelic Spark -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/KaelicSpark.png">
+<span>Kaelic Spark</span>
+
+<div class="tooltip">
+<img src="icons/KaelicSpark.png">
+
+<div class="tooltip-title">Kaelic Spark</div>
+<div class="tooltip-desc">Rare gathering resource from Val Kaeli used to craft Visionmaker equipment.</div>
+
+<div class="tooltip-header">Gathered From</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Gathering Nodes – Rare drop</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+
+<!-- Cyasmic Oil -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/CyasmicOil.png">
+<span>Cyasmic Oil</span>
+
+<div class="tooltip">
+<img src="icons/CyasmicOil.png">
+
+<div class="tooltip-title">Cyasmic Oil</div>
+<div class="tooltip-desc">Oily bladder from argon monsters used in Visionmaker crafting.</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Provelle – Invalesco Merchant (Pathfinder Post)</div>
+</div>
+</div>
+</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td><strong>5</strong></td>
+</tr>
+
+
+<!-- Argon Vitriol -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ArgonVitriol.png">
+<span>Argon Vitriol</span>
+
+<div class="tooltip">
+<img src="icons/ArgonVitriol.png">
+
+<div class="tooltip-title">Argon Vitriol</div>
+<div class="tooltip-desc">Durable material dropped from argon enemies.</div>
+
+<div class="tooltip-header">Dropped By</div>
+<div class="tooltip-entry"><span style="color:teal;">PVE</span>: Level 60 BAMs (Argonea, Granarkus)</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+
+<!-- Chaos Block -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ChaosBlock.png">
+<span>Chaos Block</span>
+
+<div class="tooltip">
+<img src="icons/ChaosBlock.png">
+
+<div class="tooltip-title">Chaos Block</div>
+<div class="tooltip-desc">Fragment infused with chaotic nexus energy.</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:grey;">Nexus</span>: Eriale – Agnitor Merchant (Zulfikar Fortress)</div>
+</div>
+</div>
+</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td><strong>5</strong></td>
+</tr>
+
+
+<!-- Victor's Trophy -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/VictorsTrophy.png">
+<span>Victor’s Trophy</span>
+
+<div class="tooltip">
+<img src="icons/VictorsTrophy.png">
+
+<div class="tooltip-title">Victor’s Trophy</div>
+<div class="tooltip-desc">Used to craft Visionmaker and Nightforge equipment.</div>
+
+<div class="tooltip-header">Purchased From</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Surah – Bellicarium Quartermaster (Velika)</div>
+<div class="tooltip-entry"><span style="color:red;">PVP</span>: Juleor – Killing Spree Quartermaster (Velika)</div>
+</div>
+</div>
+</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td><strong>7</strong></td>
+</tr>
+
+</table>
+</section>
+<section id="class-gear-sets">
+<h2>Class Gear Sets</h2>
+
+<!-- Warrior -->
+<details class="class-set role-hybrid">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconWarrior.webp">
+    Warrior
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/WarriorWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/LeatherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/WarriorWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/LeatherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/WarriorChest.png">
+</div>
+
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/WarriorWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/WarriorChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/WarriorWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/WarriorChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+</details>
+
+<!-- Lancer -->
+<details class="class-set role-tank">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconLancer.webp">
+    Lancer
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/LancerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/PlateChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/LancerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/PlateChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/LancerChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/LancerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/LancerChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/LancerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/LancerChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+</details>
+
+<!-- Slayer -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconSlayer.webp">
+    Slayer
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/SlayerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/LeatherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/SlayerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/LeatherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/SlayerChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/SlayerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/SlayerChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/SlayerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/SlayerChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+</details>
+
+<!-- Berserker -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconBerserker.webp">
+    Berserker
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/BerserkerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/PlateChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/BerserkerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/PlateChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/BerserkerChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/BerserkerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/BerserkerChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/BerserkerWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/BerserkerChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/PlateBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/PlateGloves.png">
+</div>
+
+</div>
+</details>
+
+</details>
+
+
+
+<!-- Sorcerer -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconSorcerer.webp">
+    Sorcerer
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/SorcererWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/ClothChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/SorcererWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/ClothChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/SorcererChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/SorcererWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/SorcererChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/SorcererWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/SorcererChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+</details>
+
+<!-- Archer -->
+<details class="class-set role-dps">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconArcher.webp">
+    Archer
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/ArcherWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/LeatherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/ArcherWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/LeatherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/ArcherChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/ArcherWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/ArcherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/ArcherWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/ArcherChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/LeatherBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/LeatherGloves.png">
+</div>
+
+</div>
+</details>
+
+
+</details>
+
+<!-- Priest -->
+<details class="class-set role-heal">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconPriest.webp">
+    Priest
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/PriestWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/ClothChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/PriestWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/ClothChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/PriestChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/PriestWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/PriestChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/PriestWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/PriestChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+</details>
+
+
+
+<!-- Mystic -->
+<details class="class-set role-heal">
+  <summary>
+    <img class="class-icon" src="icons/ClassIconMystic.webp">
+    Mystic
+  </summary>
+
+
+<!-- Dreamkeeper -->
+<details class="gear-tier">
+<summary>Dreamkeeper</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Dreamkeeper Weapon</div>
+<img src="sets/dreamkeeper/MysticWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Chest</div>
+<img src="sets/dreamkeeper/ClothChest.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Boots</div>
+<img src="sets/dreamkeeper/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Dreamkeeper Gloves</div>
+<img src="sets/dreamkeeper/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Abyss -->
+<details class="gear-tier">
+<summary>Abyss</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Abyss Weapon</div>
+<img src="sets/abyss/MysticWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Chest</div>
+<img src="sets/abyss/ClothChest.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Boots</div>
+<img src="sets/abyss/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Abyss Gloves</div>
+<img src="sets/abyss/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Mayhem -->
+<details class="gear-tier">
+<summary>Mayhem</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Mayhem Chest</div>
+<img src="sets/mayhem/MysticChest.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Regent -->
+<details class="gear-tier">
+<summary>Regent</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Regent Weapon</div>
+<img src="sets/regent/MysticWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Chest</div>
+<img src="sets/regent/MysticChest.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Boots</div>
+<img src="sets/regent/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Regent Gloves</div>
+<img src="sets/regent/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+<!-- Visionmaker -->
+<details class="gear-tier">
+<summary>Visionmaker</summary>
+
+<div class="gear-grid">
+
+<div>
+<div class="gear-title">Visionmaker Weapon</div>
+<img src="sets/visionmaker/MysticWeapon.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Chest</div>
+<img src="sets/visionmaker/MysticChest.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Boots</div>
+<img src="sets/visionmaker/ClothBoots.png">
+</div>
+
+<div>
+<div class="gear-title">Visionmaker Gloves</div>
+<img src="sets/visionmaker/ClothGloves.png">
+</div>
+
+</div>
+</details>
+
+
+</details>
+
+<section id="glossary">
+  <h2>Glossary</h2>
+
+  <h3>Tokens</h3>
+  <div class="glossary-item"><img class="icon" src="icons/MarkOfInception.png" alt=""><strong>Inception Token</strong> – Exchange for Dreamkeeper Set</div>
+  <div class="glossary-item"><img class="icon" src="icons/GlyphToken.png" alt=""><strong>Glyph Token</strong> – Used to unlock or upgrade class glyphs that enhance abilities</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssalMark.png" alt=""><strong>Lesser Abyssal Mark</strong> – Exchange for Abyss Gloves and Boots</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssalMark.png" alt=""><strong>Greater Abyssal Mark</strong> – Exchange for Abyss Weapon and Chest</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssalMark.png" alt=""><strong>Mark of the Phoenix</strong> – Exchange for Mayhem Chest or Pristine Phoenix Beaks needed to craft Visionmaker Set</div>
+
+
+  <h3>Gear Sets</h3>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperChest.png" alt=""><strong>Dreamkeeper Set</strong> – Tier 9, entry-level gear set</div>
+  <div class="glossary-item"><img class="icon" src="icons/AbyssChest.png" alt=""><strong>Abyss Set</strong> – Tier 10, mid-level gear set</div>
+  <div class="glossary-item"><img class="icon" src="icons/MayhemChest.png" alt=""><strong>Mayhem Set/Chest</strong> – Tier 10, High-level gear set (Chest piece only)</div>
+  <div class="glossary-item"><img class="icon" src="icons/RegentChest.png" alt=""><strong>Regent Set</strong> – Tier 10, High-level gear set</div>
+
+  <h3>Jewelry</h3>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperEarring.png" alt=""><strong>Dangling Fork</strong> – Entry-level earring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperEarring.png" alt=""><strong>Caged Raindrop</strong> – Mid-level earring</div>
+  <div class="glossary-item"><img class="icon" src="icons/PhoenixEar.png" alt=""><strong>Phoenix Ear</strong> – High-end/BiS earring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperRing.png" alt=""><strong>Sunder Ring</strong> – Entry-level ring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperRing.png" alt=""><strong>Sprocket Ring</strong> – Mid-level ring</div>
+  <div class="glossary-item"><img class="icon" src="icons/PhoenixSignet.png" alt=""><strong>Phoenix Signet</strong> – High-end/BiS ring</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperNecklace.png" alt=""><strong>Thulsan Curio</strong> – Entry-level necklace</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperNecklace.png" alt=""><strong>Chain of Deceit</strong> – Mid-level necklace</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamkeeperNecklace.png" alt=""><strong>Crown Jewels</strong> – High-end/BiS necklace</div>
+
+  <h3>Enchanting Materials</h3>
+  <div class="glossary-item"><img class="icon" src="icons/MarvelousAlkahest.png" alt=""><strong>Marvelous Alkahest</strong> – Enchanting material used to upgrade gear</div>
+  <div class="glossary-item"><img class="icon" src="icons/MarvelousFeedstock.png" alt=""><strong>Marvelous Feedstock</strong> – Enchanting material used to upgrade Tier 10 gear (e.g., Abyss, Mayhem, Regent, and Visionmaker)</div>
+  <div class="glossary-item"><img class="icon" src="icons/MasterEnigmaticScroll.png" alt=""><strong>Master Enigmatic Scroll</strong> – Converts unidentified gear into an enigmatic state so it can become masterworked or have its bonus stats rerolled</div>
+  <div class="glossary-item"><img class="icon" src="icons/IntricateIdentificationScroll.png" alt=""><strong>Intricate Identification Scroll</strong> – Identifies enigmatic gear, revealing the possibility of becoming masterworked and/or applying its randomized bonus stats</div>
+  <div class="glossary-item"><img class="icon" src="icons/Tier9Feedstock.png" alt=""><strong>Tier 9 Feedstock</strong> – Base enchanting material used to upgrade Tier 9 gear (e.g., Dreamkeeper)</div>
+
+  <h3>Visionmaker Crafting Materials</h3>
+  <div class="glossary-item"><img class="icon" src="icons/DesignWeapon.png" alt=""><strong>Visionmaker Designs</strong> – Crafting blueprints for Visionmaker Set</div>
+  <div class="glossary-item"><img class="icon" src="icons/DreamBindings.png" alt=""><strong>Dream Bindings</strong> – Material used to craft Visionmaker Armor</div>
+  <div class="glossary-item"><img class="icon" src="icons/Fanesteel.png" alt=""><strong>Fanesteel</strong> – Material used to craft Visionmaker Weapons</div>
+  <div class="glossary-item"><img class="icon" src="icons/PristinePhoenixBeak.png" alt=""><strong>Pristine Phoenix Beak</strong> – Material used to craft Visionmaker Set</div>
+
+<div class="glossary-item"><img class="icon" src="icons/KaelicSpark.png" alt=""><strong>Kaelic Spark</strong> – Rare gathering catalyst used to craft Visionmaker equipment</div>
+<div class="glossary-item"><img class="icon" src="icons/CyasmicOil.png" alt=""><strong>Cyasmic Oil</strong> – Argon-derived oil used in Visionmaker crafting</div>
+<div class="glossary-item"><img class="icon" src="icons/ArgonVitriol.png" alt=""><strong>Argon Vitriol</strong> – Hardened argon residue used to craft Visionmaker equipment</div>
+<div class="glossary-item"><img class="icon" src="icons/ChaosBlock.png" alt=""><strong>Chaos Block</strong> – Condensed nexus energy used in Visionmaker crafting</div>
+<div class="glossary-item"><img class="icon" src="icons/VictorsTrophy.png" alt=""><strong>Victor’s Trophy</strong> – PvP token used to craft Visionmaker gear</div>
+
+  <h3>Consumables</h3>
+  <div class="glossary-item"><img class="icon" src="icons/NostrumOfEnergyV.png" alt=""><strong>Nostrum of Energy</strong> – Consumable that temporarily boosts attack speed</div>
+  <div class="glossary-item"><img class="icon" src="icons/OnslaughtScrollCritFactorV.png" alt=""><strong>Onslaught Scroll</strong> – Consumable that temporarily boosts a specific stat (e.g., attack speed, crit factor, crit power)</div>
+
+
+</section>
+
+
+
+</div>
+<footer>Old School TERA PvE Guide</footer>
+
+<script>
+
+// TOOLTIP SYSTEM
+const triggers = document.querySelectorAll('.tooltip-trigger');
+
+triggers.forEach(trigger => {
+
+  const tooltip = trigger.querySelector('.tooltip');
+
+  trigger.addEventListener('mouseenter', () => {
+    tooltip.style.display = 'block';
+  });
+
+  trigger.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+  });
+
+  trigger.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY + 15) + 'px';
+  });
+
+});
+
+
+// CLASS ACCORDION (only one class open)
+document.querySelectorAll(".class-set").forEach(section => {
+
+  section.addEventListener("toggle", function () {
+
+    if (this.open) {
+      document.querySelectorAll(".class-set").forEach(other => {
+        if (other !== this) {
+          other.open = false;
+        }
+      });
+    }
+
+  });
+
+});
+
+// GEAR TIER ACCORDION
+document.querySelectorAll(".gear-tier").forEach(section => {
+
+  section.addEventListener("toggle", function () {
+
+    if (this.open) {
+
+      const parent = this.closest(".class-set");
+
+      parent.querySelectorAll(".gear-tier").forEach(other => {
+        if (other !== this) {
+          other.open = false;
+        }
+      });
+
+    }
+
+  });
+
+});
+
+</script>
 </body>
 </html>
