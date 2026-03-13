@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>TERA Gear Bonus Checker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  :root {
+    --tera-bg: #050810;
+    --tera-panel: #101827;
+    --tera-accent: #3aa2ff;
+    --tera-accent-soft: #234567;
+    --attack-defense-label: #4aa8ff;
+    --bonus-label: #4bff9c;
+    --tera-yellow: #ffd700;
+    --text-main: #e5f0ff;
+    --text-muted: #8aa0c5;
+    --border-soft: #25324a;
+    --red: #ff4b4b;
+    --orange: #ffb347;
+    --green: #3bff6a;
+    --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.65);
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    padding: 16px;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #1a2340 0, #050810 55%);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 900px;
+    background: linear-gradient(145deg, #101827, #060914);
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-soft);
+    padding: 18px 16px 20px;
+  }
+
+  .app-header {
+    margin-bottom: 14px;
+  }
+
+  .app-title {
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--tera-accent);
+    text-align: center;
+  }
+
+  .collapsible {
+    margin-bottom: 12px;
+  }
+
+  .collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(27, 39, 68, 0.5);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+  }
+
+  .collapsible-header:hover {
+    background: rgba(27, 39, 68, 0.7);
+  }
+
+  .collapsible-icon {
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+  }
+
+  .collapsible-icon.open {
+    transform: rotate(90deg);
+  }
+
+  .collapsible-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tera-accent);
+  }
+
+  .collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .collapsible-content.open {
+    max-height: 1000px;
+  }
+
+  .collapsible-body {
+    padding: 12px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .collapsible-body h4 {
+    margin: 12px 0 6px 0;
+    font-size: 0.9rem;
+    color: var(--text-main);
+  }
+
+  .collapsible-body p {
+    margin: 6px 0;
+  }
+
+  .collapsible-body code {
+    background: rgba(3, 8, 15, 0.6);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: var(--bonus-label);
+  }
+
+  .collapsible-body .credit {
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .calc-card {
+    padding: 12px 10px 12px;
+    border-radius: 10px;
+    background: radial-gradient(circle at top left, #1b2744 0, #060914 60%);
+    border: 1px solid #1a2436;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .calc-card.roll-1 {
+    border-color: var(--red);
+    box-shadow: 0 0 10px rgba(255, 75, 75, 0.25);
+  }
+
+  .calc-card.roll-2 {
+    border-color: var(--orange);
+    box-shadow: 0 0 10px rgba(255, 179, 71, 0.25);
+  }
+
+  .calc-card.roll-3 {
+    border-color: var(--green);
+    box-shadow: 0 0 12px rgba(59, 255, 106, 0.35);
+  }
+
+  .calc-title-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .calc-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+.formula-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(86, 99, 124, 0.9);
+  background: rgba(8, 12, 22, 0.95);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #c084fc; /* purple label */
+  margin-right: 4px;
+}
+
+.formula-inline code {
+  background: transparent;
+  padding: 0;
+  color: var(--text-muted);
+}
+
+  .field {
+    flex: 0 0 31%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+
+  .field-label.enchant {
+    color: var(--tera-yellow);
+  }
+
+  .field-label.modifier {
+    color: var(--attack-defense-label);
+  }
+
+  .field-label.bonus {
+    color: var(--bonus-label);
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    padding: 7px 8px;
+    border-radius: 7px;
+    border: 1px solid var(--border-soft);
+    background: rgba(3, 8, 15, 0.9);
+    color: var(--text-main);
+    font-size: 0.86rem;
+    outline: none;
+  }
+
+  .field input.base-input {
+    color: var(--attack-defense-label) !important;
+  }
+
+  .field input.bonus-input {
+    color: var(--bonus-label) !important;
+  }
+
+  .field select.enchant-input {
+    color: var(--tera-yellow);
+    background-color: rgba(3, 8, 15, 0.9);
+    border: 1px solid var(--border-soft);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .field select.enchant-input option {
+    color: var(--tera-yellow);
+    background-color: #050810;
+  }
+
+  .field select.enchant-input option[value=""] {
+    color: var(--text-muted);
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--tera-accent);
+    box-shadow: 0 0 0 1px rgba(40, 138, 255, 0.35);
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .result-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .result-chip {
+    min-width: 60px;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid transparent;
+  }
+
+  .result-chip.red {
+    color: var(--red);
+    border-color: rgba(255, 75, 75, 0.7);
+    background: rgba(40, 5, 5, 0.8);
+  }
+
+  .result-chip.orange {
+    color: var(--orange);
+    border-color: rgba(255, 179, 71, 0.7);
+    background: rgba(40, 26, 5, 0.8);
+  }
+
+  .result-chip.green {
+    color: var(--green);
+    border-color: rgba(59, 255, 106, 0.7);
+    background: rgba(6, 36, 16, 0.85);
+  }
+
+  .result-chip.neutral {
+    color: var(--text-muted);
+    border-color: rgba(86, 99, 124, 0.8);
+    background: rgba(8, 12, 22, 0.85);
+  }
+
+  @media (max-width: 768px) {
+    .app {
+      max-width: 520px;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .calc-card .form-row {
+      flex-direction: column;
+    }
+    .calc-card .field {
+      flex: 1 0 100%;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="app-header">
+    <div class="app-title">TERA Gear Bonus Checker (Patch 31.04)</div>
+  </div>
+
+  <div class="grid">
+    <!-- Weapon -->
+    <div class="calc-card" data-calc data-gear="weapon">
+      <div class="calc-title-row">
+        <div class="calc-title">Weapon</div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label enchant">Enchant Level</label>
+          <select class="enchant-input">
+            <option value="1">+1</option>
+            <option value="2">+2</option>
+            <option value="3">+3</option>
+            <option value="4">+4</option>
+            <option value="5">+5</option>
+            <option value="6">+6</option>
+            <option value="7">+7</option>
+            <option value="8">+8</option>
+            <option value="9">+9</option>
+            <option value="10">+10</option>
+            <option value="11">+11</option>
+            <option value="12" selected>+12</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label modifier">Attack Modifier</label>
+          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 3499" />
+        </div>
+        <div class="field">
+          <label class="field-label bonus">+Bonus Value</label>
+          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 1363" />
+        </div>
+      </div>
+
+      <div class="result-row">
+        <div class="result-label">Bonus</div>
+        <div class="result-chip neutral" data-result>—</div>
+      </div>
+    </div>
+
+    <!-- Chest -->
+    <div class="calc-card" data-calc data-gear="chest">
+      <div class="calc-title-row">
+        <div class="calc-title">Chest</div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label enchant">Enchant Level</label>
+          <select class="enchant-input">
+            <option value="1">+1</option>
+            <option value="2">+2</option>
+            <option value="3">+3</option>
+            <option value="4">+4</option>
+            <option value="5">+5</option>
+            <option value="6">+6</option>
+            <option value="7">+7</option>
+            <option value="8">+8</option>
+            <option value="9">+9</option>
+            <option value="10">+10</option>
+            <option value="11">+11</option>
+            <option value="12" selected>+12</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label modifier">Defense Modifier</label>
+          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 4186" />
+        </div>
+        <div class="field">
+          <label class="field-label bonus">+Bonus Value</label>
+          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 2385" />
+        </div>
+      </div>
+
+      <div class="result-row">
+        <div class="result-label">Bonus</div>
+        <div class="result-chip neutral" data-result>—</div>
+      </div>
+    </div>
+
+    <!-- Boots -->
+    <div class="calc-card" data-calc data-gear="boots">
+      <div class="calc-title-row">
+        <div class="calc-title">Boots</div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label enchant">Enchant Level</label>
+          <select class="enchant-input">
+            <option value="1">+1</option>
+            <option value="2">+2</option>
+            <option value="3">+3</option>
+            <option value="4">+4</option>
+            <option value="5">+5</option>
+            <option value="6">+6</option>
+            <option value="7">+7</option>
+            <option value="8">+8</option>
+            <option value="9">+9</option>
+            <option value="10">+10</option>
+            <option value="11">+11</option>
+            <option value="12" selected>+12</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label modifier">Defense Modifier</label>
+          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 3055" />
+        </div>
+        <div class="field">
+          <label class="field-label bonus">+Bonus Value</label>
+          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 1710" />
+        </div>
+      </div>
+
+      <div class="result-row">
+        <div class="result-label">Bonus</div>
+        <div class="result-chip neutral" data-result>—</div>
+      </div>
+    </div>
+
+    <!-- Gloves -->
+    <div class="calc-card" data-calc data-gear="gloves">
+      <div class="calc-title-row">
+        <div class="calc-title">Gloves</div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label enchant">Enchant Level</label>
+          <select class="enchant-input">
+            <option value="1">+1</option>
+            <option value="2">+2</option>
+            <option value="3">+3</option>
+            <option value="4">+4</option>
+            <option value="5">+5</option>
+            <option value="6">+6</option>
+            <option value="7">+7</option>
+            <option value="8">+8</option>
+            <option value="9">+9</option>
+            <option value="10">+10</option>
+            <option value="11">+11</option>
+            <option value="12" selected>+12</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label modifier">Defense Modifier</label>
+          <input type="number" class="base-input" inputmode="numeric" placeholder="e.g. 3139" />
+        </div>
+        <div class="field">
+          <label class="field-label bonus">+Bonus Value</label>
+          <input type="number" class="bonus-input" inputmode="numeric" placeholder="e.g. 1789" />
+        </div>
+      </div>
+
+      <div class="result-row">
+        <div class="result-label">Bonus</div>
+        <div class="result-chip neutral" data-result>—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background -->
+  <div class="collapsible">
+    <div class="collapsible-header"
+         onclick="toggleCollapsible('background')"
+         aria-expanded="false"
+         aria-controls="backgroundContent">
+
+      <span class="collapsible-icon" id="backgroundIcon">▶</span>
+      <span class="collapsible-title">Background</span>
+    </div>
+
+    <div class="collapsible-content" id="backgroundContent">
+      <div class="collapsible-body">
+        <p>
+          When TERA launched, its developers wanted a gearing system that rewarded progression
+          without making equipment feel completely deterministic. In many MMOs, once a player
+          obtained a piece of gear and upgraded it to its maximum enchant level, there was little
+          reason to pursue that same item again.
+        </p>
+
+        <p>
+          To address this, the developers introduced
+          small, randomized stat rolls within the gear's bonuses—<strong>1%, 2%, or 3%</strong> of a base stat.
+          The difference between these rolls is intentionally small as the goal is not to drastically
+          change player power, but to introduce subtle item quality variance that rewards
+          players who continue optimizing their gear.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why This Tool Exists -->
+  <div class="collapsible">
+    <div class="collapsible-header"
+         onclick="toggleCollapsible('whyTool')"
+         aria-expanded="false"
+         aria-controls="whyToolContent">
+
+      <span class="collapsible-icon" id="whyToolIcon">▶</span>
+      <span class="collapsible-title">Why This Tool Exists</span>
+    </div>
+
+    <div class="collapsible-content" id="whyToolContent">
+      <div class="collapsible-body">
+        <p>
+          TERA does not display these bonus percentages directly. Instead, it shows the
+          <strong>final calculated stat values</strong>, which are derived from the base stat,
+          enchant multipliers, and the hidden bonus percentage. Because the game also
+          rounds values down during calculations, the resulting numbers can
+          appear inconsistent, making it difficult to immediately determine whether a roll
+          is +1%, +2%, or +3%.
+        </p>
+
+        <p>
+          For this reason, community-developed calculators were created to reverse-engineer the hidden percentage from the
+          final stat values and accurately determine an item's bonus. Earlier tools, however, often
+          required excessive manual input or relied on dense spreadsheet-style layouts that were difficult to
+          parse at a glance.
+        </p>
+        <p>
+          In this vein, this tool was created to provide a clearer, more streamlined experience for an otherwise mysterious aspect of the game.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- How It Works Collapsible -->
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible('howItWorks')">
+      <span class="collapsible-icon" id="howItWorksIcon">▶</span>
+      <span class="collapsible-title">How It Works</span>
+    </div>
+    <div class="collapsible-content" id="howItWorksContent">
+      <div class="collapsible-body">
+        <p>This tool calculates the quality of your gear bonus rolls using the following formulas:</p>
+<h4>Weapon:</h4>
+<p class="formula-inline">
+  <span class="formula-badge">Bonus%</span>
+  <code>
+    =
+    (
+      <span style="color: #4bff9c;">AttackBonus</span>
+      − ROUNDDOWN(
+        <span style="color: #4aa8ff;">AttackMod</span>
+        × 0.03 ×
+        <span style="color: #ffd700;">Enchant</span>
+      )
+    )
+    /
+    <span style="color: #4aa8ff;">AttackMod</span>
+  </code>
+</p>
+
+<h4>Chest, Gloves, Boots:</h4>
+<p class="formula-inline">
+  <span class="formula-badge">Bonus%</span>
+  <code>
+    =
+    (
+      <span style="color: #4bff9c;">DefenseBonus</span>
+      − ROUNDDOWN(
+        <span style="color: #4aa8ff;">DefenseMod</span>
+        × 0.045 ×
+        <span style="color: #ffd700;">Enchant</span>
+      )
+    )
+    /
+    <span style="color: #4aa8ff;">DefenseMod</span>
+  </code>
+</p>
+
+        <h4>Roll Quality Interpretation:</h4>
+        <ul>
+          <li><strong style="color: var(--red);">1% (Red)</strong> — Worst Roll (Bonus% &lt; 0.01)</li>
+          <li><strong style="color: var(--orange);">2% (Orange)</strong> — Average Roll (Bonus% 0.01 to 0.025)</li>
+          <li><strong style="color: var(--green);">3% (Green)</strong> — Perfect Roll (Bonus% ≥ 0.025)</li>
+        </ul>
+
+        <p>The formulas compare your actual bonus to the minimum expected value for your enchant level, then turn that difference into a quality score.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acknowledgements -->
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible('acknowledgements')">
+      <span class="collapsible-icon" id="acknowledgementsIcon">▶</span>
+      <span class="collapsible-title">Acknowledgements</span>
+    </div>
+    <div class="collapsible-content" id="acknowledgementsContent">
+      <div class="collapsible-body">
+        <p class="credit"><strong>Source Material &amp; Research: </strong>Idi0ticGenius, Loriri - TERA NA Tempest Reach / KTERA 벨릭의 은총</p>
+        <p class="credit"><strong>Tool Creator: </strong>Eph - Old School TERA Online</p>
+        <p class="credit"><strong>Last Modified: </strong>March 2026</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleCollapsible(id) {
+    const content = document.getElementById(id + 'Content');
+    const icon = document.getElementById(id + 'Icon');
+
+    if (!content || !icon) return;
+
+    if (content.classList.contains('open')) {
+      content.classList.remove('open');
+      icon.classList.remove('open');
+    } else {
+      content.classList.add('open');
+      icon.classList.add('open');
+    }
+  }
+
+  function rawValue(gear, base, bonus, enchant) {
+    if (!base || !bonus || !enchant || base <= 0) return null;
+    const B = enchant;
+    const D = base;
+    const E = bonus;
+    let factor = 0.045;
+    if (gear === 'weapon') factor = 0.03;
+    const expected = Math.floor(D * factor * B);
+    return (E - expected) / D;
+  }
+
+  function mapRawToPercent(val) {
+    if (val === null || !isFinite(val)) return null;
+    if (val < 0.01) return 1;
+    if (val < 0.025) return 2;
+    return 3;
+  }
+
+  function updateCalc(card) {
+    const gear       = card.getAttribute('data-gear');
+    const baseInput  = card.querySelector('.base-input');
+    const bonusInput = card.querySelector('.bonus-input');
+    const enchantSel = card.querySelector('.enchant-input');
+    const resultEl   = card.querySelector('[data-result]');
+
+    const base    = parseFloat(baseInput.value);
+    const bonus   = parseFloat(bonusInput.value);
+    const enchant = parseFloat(enchantSel.value);
+
+    card.classList.remove('roll-1', 'roll-2', 'roll-3');
+
+    if (!base || !bonus || base <= 0 || bonus <= 0 || !isFinite(enchant)) {
+      resultEl.textContent = '—';
+      resultEl.className = 'result-chip neutral';
+      return;
+    }
+
+    const rv = rawValue(gear, base, bonus, enchant);
+    const rollPercent = mapRawToPercent(rv);
+
+    if (!rollPercent) {
+      resultEl.textContent = '—';
+      resultEl.className = 'result-chip neutral';
+      return;
+    }
+
+    resultEl.textContent = rollPercent + '%';
+
+    if (rollPercent === 3) {
+      resultEl.className = 'result-chip green';
+      card.classList.add('roll-3');
+    } else if (rollPercent === 2) {
+      resultEl.className = 'result-chip orange';
+      card.classList.add('roll-2');
+    } else if (rollPercent === 1) {
+      resultEl.className = 'result-chip red';
+      card.classList.add('roll-1');
+    } else {
+      resultEl.className = 'result-chip neutral';
+    }
+  }
+
+  document.querySelectorAll('[data-calc]').forEach(card => {
+    const inputs = card.querySelectorAll('.base-input, .bonus-input, .enchant-input');
+    ['input', 'change'].forEach(evt => {
+      inputs.forEach(input => {
+        input.addEventListener(evt, () => updateCalc(card));
+      });
+    });
+  });
+</script>
+</body>
+</html>
