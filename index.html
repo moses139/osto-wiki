@@ -3,44 +3,91 @@
 <head>
 <title>OSTO Wiki Demo Pages</title>
 <style>
-body{
+/* Dark theme */
+body {
     font-family: Arial, sans-serif;
-    max-width: 700px;
+    max-width: 900px;
     margin: 40px auto;
     line-height: 1.6;
+    background: #121212;
+    color: #ddd;
 }
 
-h1{
-    text-align:center;
+/* Header */
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    margin-bottom: 30px;
 }
 
-h2{
-    margin-top:30px;
+header h1 {
+    font-size: 2.8em;
+    color: #6db8ff;
+    margin: 0 0 10px 0;
+    text-shadow: 1px 1px 4px #000;
 }
 
-ul{
-    padding-left:20px;
+header p {
+    font-size: 1.2em;
+    color: #aaa;
+    margin: 0;
 }
 
-li{
-    margin:6px 0;
+/* Section headings */
+h2 {
+    margin-top: 40px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+    color: #6db8ff;
 }
 
-a{
-    text-decoration:none;
+/* Link cards */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-a:hover{
-    text-decoration:underline;
+li {
+    margin: 12px 0;
+}
+
+a {
+    display: block;
+    background: #1e1e1e;
+    color: #ddd;
+    padding: 14px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+a:hover {
+    background: #2a2a2a;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+}
+
+/* Footer */
+footer {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #888;
 }
 </style>
 </head>
 
 <body>
 
-<h1>OSTO Wiki Demo Pages</h1>
-
-<p>Guides and tools for Old School TERA Online.</p>
+<header>
+<h1>OSTO Wiki Dev</h1>
+<p>Guides and tools for Old School TERA Online</p>
+</header>
 
 <h2>Guides</h2>
 <ul>
@@ -52,6 +99,9 @@ a:hover{
 <li><a href="guide/misc/bonus-checker.html">Gear Bonus Checker</a></li>
 </ul>
 
+<footer>
+&copy; 2026 OSTO Wiki. All content belongs to the OSTO community.
+</footer>
 
 </body>
 </html>
