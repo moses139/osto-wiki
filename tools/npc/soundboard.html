@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>TERA - NPC Soundboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+  :root {
+    --tera-bg: #050810;
+    --tera-panel: #101827;
+    --tera-accent: #3aa2ff;
+    --tera-accent-soft: #234567;
+    --attack-defense-label: #4aa8ff;
+    --bonus-label: #4bff9c;
+    --tera-yellow: #ffd700;
+    --text-main: #e5f0ff;
+    --text-muted: #8aa0c5;
+    --border-soft: #25324a;
+    --red: #ff4b4b;
+    --orange: #ffb347;
+    --green: #3bff6a;
+    --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.65);
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    padding: 16px;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #1a2340 0, #050810 55%);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 900px;
+    background: linear-gradient(145deg, #101827, #060914);
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-soft);
+    padding: 18px 16px 20px;
+  }
+
+  .app-title {
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--tera-accent);
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .calc-card {
+    padding: 12px 10px;
+    border-radius: 10px;
+    background: radial-gradient(circle at top left, #1b2744 0, #060914 60%);
+    border: 1px solid #1a2436;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.2s ease;
+  }
+
+  .calc-card:hover {
+    transform: scale(1.02);
+    border-color: var(--tera-accent);
+  }
+
+  .calc-title-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .calc-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .result-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .result-chip {
+    min-width: 60px;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid rgba(86, 99, 124, 0.8);
+    background: rgba(8, 12, 22, 0.85);
+    color: var(--text-muted);
+  }
+
+  .result-chip.playing {
+    color: var(--green);
+    border-color: rgba(59, 255, 106, 0.7);
+    background: rgba(6, 36, 16, 0.85);
+  }
+
+  .collapsible {
+    margin-top: 14px;
+  }
+
+  .collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(27, 39, 68, 0.5);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .collapsible-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .collapsible-icon.open {
+    transform: rotate(90deg);
+  }
+
+  .collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .collapsible-content.open {
+    max-height: 300px;
+  }
+
+  .collapsible-body {
+    padding: 12px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="app-title">TERA - NPC Soundboard</div>
+
+  <div class="grid">
+
+    <!-- SOUND CARD -->
+    <div class="calc-card" onclick="playSound('npc/sounds/YouNeedAnythingFromMe.mp3', this)">
+      <div class="calc-title-row">
+        <div class="calc-title">You Need Anything From Me</div>
+      </div>
+      <div class="result-row">
+        <div class="result-label">NPC</div>
+        <div class="result-chip">▶ Play</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  let currentAudio = null;
+
+  function playSound(src, card) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+
+    document.querySelectorAll('.result-chip').forEach(el => {
+      el.classList.remove('playing');
+      el.textContent = '▶ Play';
+    });
+
+    currentAudio = new Audio(src);
+    currentAudio.play();
+
+    const chip = card.querySelector('.result-chip');
+    chip.classList.add('playing');
+    chip.textContent = '🔊 Playing';
+
+    currentAudio.onended = () => {
+      chip.classList.remove('playing');
+      chip.textContent = '▶ Play';
+    };
+  }
+
+  function toggleCollapsible(id) {
+    const content = document.getElementById(id + 'Content');
+    const icon = document.getElementById(id + 'Icon');
+
+    const open = content.classList.toggle('open');
+    icon.classList.toggle('open', open);
+  }
+</script>
+
+</body>
+</html>
