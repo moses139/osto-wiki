@@ -10,15 +10,9 @@
     --tera-bg: #050810;
     --tera-panel: #101827;
     --tera-accent: #3aa2ff;
-    --tera-accent-soft: #234567;
-    --attack-defense-label: #4aa8ff;
-    --bonus-label: #4bff9c;
-    --tera-yellow: #ffd700;
     --text-main: #e5f0ff;
     --text-muted: #8aa0c5;
     --border-soft: #25324a;
-    --red: #ff4b4b;
-    --orange: #ffb347;
     --green: #3bff6a;
     --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.65);
   }
@@ -46,15 +40,21 @@
     border-radius: 14px;
     border: 1px solid var(--border-soft);
     box-shadow: var(--shadow-soft);
-    padding: 18px 16px 20px;
+    padding: 18px;
   }
 
   .app-title {
+    text-align: center;
     font-size: 1.1rem;
     letter-spacing: 0.03em;
-    text-transform: uppercase;
     color: var(--tera-accent);
+    margin-bottom: 6px;
+  }
+
+  .copyright {
     text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
     margin-bottom: 14px;
   }
 
@@ -65,23 +65,24 @@
   }
 
   .calc-card {
-    padding: 12px 10px;
+    padding: 22px;
     border-radius: 10px;
     background: radial-gradient(circle at top left, #1b2744 0, #060914 60%);
     border: 1px solid #1a2436;
     cursor: pointer;
     transition: transform 0.15s ease, border-color 0.2s ease;
+    text-align: center;
+
+    /* NEW: better layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
 
   .calc-card:hover {
     transform: scale(1.02);
     border-color: var(--tera-accent);
-  }
-
-  .calc-title-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
   }
 
   .calc-title {
@@ -90,73 +91,24 @@
     letter-spacing: 0.08em;
   }
 
-  .result-row {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 8px;
+  .sound-button {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 2px solid rgba(86, 99, 124, 0.8);
+    transition: transform 0.15s ease, border-color 0.2s ease;
+  }
+
+  .calc-card:hover .sound-button {
+    transform: scale(1.05);
+    border-color: var(--tera-accent);
   }
 
   .result-label {
     font-size: 0.8rem;
     color: var(--text-muted);
-  }
-
-  .result-chip {
-    min-width: 60px;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border: 1px solid rgba(86, 99, 124, 0.8);
-    background: rgba(8, 12, 22, 0.85);
-    color: var(--text-muted);
-  }
-
-  .result-chip.playing {
-    color: var(--green);
-    border-color: rgba(59, 255, 106, 0.7);
-    background: rgba(6, 36, 16, 0.85);
-  }
-
-  .collapsible {
-    margin-top: 14px;
-  }
-
-  .collapsible-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    background: rgba(27, 39, 68, 0.5);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    cursor: pointer;
-  }
-
-  .collapsible-icon {
-    transition: transform 0.2s ease;
-  }
-
-  .collapsible-icon.open {
-    transform: rotate(90deg);
-  }
-
-  .collapsible-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-
-  .collapsible-content.open {
-    max-height: 300px;
-  }
-
-  .collapsible-body {
-    padding: 12px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    margin-top: 6px;
   }
 
   @media (max-width: 768px) {
@@ -168,61 +120,100 @@
 </head>
 
 <body>
-<div class="app">
 
+<div class="app">
   <div class="app-title">TERA - NPC Soundboard</div>
 
   <div class="grid">
 
-    <!-- SOUND CARD -->
-    <div class="calc-card" onclick="playSound('npc-soundboard/sounds/YouNeedAnythingFromMe.mp3', this)">
-      <div class="calc-title-row">
-        <div class="calc-title">You Need Anything From Me</div>
-      </div>
-      <div class="result-row">
-        <div class="result-label">NPC</div>
-        <div class="result-chip">▶ Play</div>
-      </div>
+    <div class="calc-card" onclick="playSound('sounds/YouNeedAnythingFromMe.mp3', this)">
+      <div class="calc-title">You Need Anything From Me?</div>
+
+      <img class="sound-button"
+           src="pictures/popori.png"
+           alt="Play Sound" />
+
+    </div>
+	
+	    <div class="calc-card" onclick="playSound('sounds/YouNeedAnythingFromMe.mp3', this)">
+      <div class="calc-title">You Need Anything From Me?</div>
+
+      <img class="sound-button"
+           src="pictures/popori.png"
+           alt="Play Sound" />
+
     </div>
 
-  </div>
 
+	    <div class="calc-card" onclick="playSound('sounds/YouNeedAnythingFromMe.mp3', this)">
+      <div class="calc-title">You Need Anything From Me?</div>
+
+      <img class="sound-button"
+           src="pictures/popori.png"
+           alt="Play Sound" />
+
+    </div>
+		    <div class="calc-card" onclick="playSound('sounds/YouNeedAnythingFromMe.mp3', this)">
+      <div class="calc-title">You Need Anything From Me?</div>
+
+      <img class="sound-button"
+           src="pictures/popori.png"
+           alt="Play Sound" />
+
+    </div>
+  </div>
 </div>
 
 <script>
-  let currentAudio = null;
+const audioCache = {};
+let currentAudio = null;
 
-  function playSound(src, card) {
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-    }
+function getAudio(src) {
+  if (!audioCache[src]) {
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    audioCache[src] = audio;
+  }
+  return audioCache[src];
+}
 
-    document.querySelectorAll('.result-chip').forEach(el => {
-      el.classList.remove('playing');
-      el.textContent = '▶ Play';
+function resetAll() {
+  document.querySelectorAll('.calc-card').forEach(card => {
+    card.style.borderColor = "#1a2436";
+  });
+}
+
+function playSound(src, card) {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
+  resetAll();
+
+  const audio = getAudio(src);
+  currentAudio = audio;
+
+  audio.currentTime = 0;
+
+  card.style.borderColor = "#3bff6a";
+
+  audio.onended = () => {
+    card.style.borderColor = "#1a2436";
+  };
+
+  audio.onpause = () => {
+    card.style.borderColor = "#1a2436";
+  };
+
+  const playPromise = audio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(err => {
+      console.error("Audio failed:", err);
     });
-
-    currentAudio = new Audio(src);
-    currentAudio.play();
-
-    const chip = card.querySelector('.result-chip');
-    chip.classList.add('playing');
-    chip.textContent = '🔊 Playing';
-
-    currentAudio.onended = () => {
-      chip.classList.remove('playing');
-      chip.textContent = '▶ Play';
-    };
   }
-
-  function toggleCollapsible(id) {
-    const content = document.getElementById(id + 'Content');
-    const icon = document.getElementById(id + 'Icon');
-
-    const open = content.classList.toggle('open');
-    icon.classList.toggle('open', open);
-  }
+}
 </script>
 
 </body>
