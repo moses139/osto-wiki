@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visionmaker Crafting Materials</title>
+<style>
+:root {
+    --bg: #0b1020;
+    --surface: rgba(14, 23, 43, 0.88);
+    --surface-2: rgba(18, 31, 58, 0.92);
+    --surface-3: rgba(28, 44, 79, 0.96);
+    --border: rgba(129, 170, 255, 0.22);
+    --border-strong: rgba(129, 170, 255, 0.42);
+    --text: #e8eefc;
+    --muted: #a9b7d6;
+    --accent: #8ec5ff;
+    --accent-2: #67e8f9;
+    --title-blue: #8ec5ff;
+    --shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 32px 18px 48px;
+    color: var(--text);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background:
+        radial-gradient(circle at top, rgba(72, 130, 255, 0.20), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(0, 200, 255, 0.12), transparent 30%),
+        linear-gradient(180deg, #050814 0%, #09111f 48%, #04070f 100%);
+}
+
+.page-shell {
+    width: min(1200px, 100%);
+    margin: 0 auto;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(16, 25, 46, 0.95), rgba(8, 14, 27, 0.96));
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.85rem, 2.4vw, 2.6rem);
+    letter-spacing: 0.02em;
+    color: var(--title-blue);
+    text-shadow: 0 0 18px rgba(142, 197, 255, 0.18);
+}
+
+.page-header p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(12, 19, 36, 0.92), rgba(8, 14, 28, 0.96));
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 920px;
+}
+
+thead th, tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 16px 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #eef5ff;
+    background: linear-gradient(180deg, rgba(35, 59, 108, 0.95), rgba(20, 35, 67, 0.95));
+    border-bottom: 1px solid var(--border-strong);
+}
+
+th, td {
+    padding: 14px;
+    text-align: center;
+    border-right: 1px solid rgba(129, 170, 255, 0.10);
+    border-bottom: 1px solid rgba(129, 170, 255, 0.12);
+}
+
+tr:last-child td { border-bottom: 0; }
+tr th:last-child, tr td:last-child { border-right: 0; }
+
+tbody tr, table tr:not(:first-child) {
+    background: rgba(8, 14, 27, 0.25);
+}
+
+table tr:not(:first-child):nth-child(even) {
+    background: rgba(16, 28, 52, 0.38);
+}
+
+table tr:not(:first-child):hover {
+    background: rgba(29, 49, 90, 0.72);
+}
+
+td:first-child, th:first-child {
+    text-align: left;
+}
+
+.amount-cell {
+    padding: 10px 8px;
+}
+
+.amount-visual {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.amount-bar {
+    position: relative;
+    width: 100%;
+    max-width: 88px;
+    height: 30px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(142, 197, 255, 0.20);
+    background: rgba(142, 197, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 10px rgba(0,0,0,0.18);
+}
+
+.amount-bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--fill, 0%);
+    background: linear-gradient(90deg, rgba(103, 232, 249, 0.22), rgba(142, 197, 255, 0.32));
+}
+
+.amount-bar span {
+    position: relative;
+    z-index: 1;
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: #f3f7ff;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+.amount-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(169, 183, 214, 0.14);
+    background: linear-gradient(180deg, rgba(169, 183, 214, 0.05), rgba(169, 183, 214, 0.02));
+    color: #93a2c2;
+    font-weight: 700;
+}
+
+.amount-bar.total {
+    border-color: rgba(103, 232, 249, 0.30);
+    background: rgba(103, 232, 249, 0.08);
+}
+
+.amount-bar.total .amount-bar-fill {
+    background: linear-gradient(90deg, rgba(103, 232, 249, 0.30), rgba(103, 232, 249, 0.46));
+}
+
+.item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 290px;
+}
+
+.item img {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    box-shadow: 0 6px 14px rgba(0,0,0,0.24);
+}
+
+.item span {
+    font-weight: 600;
+    color: #edf4ff;
+}
+
+.tooltip-trigger {
+    cursor: default;
+}
+
+.tooltip {
+    position: fixed;
+    display: none;
+    width: min(700px, calc(100vw - 24px));
+    max-width: 100%;
+    padding: 18px;
+    border: 1px solid rgba(142, 197, 255, 0.32);
+    border-radius: 18px;
+    color: var(--text);
+    background: linear-gradient(180deg, rgba(15, 24, 44, 0.985), rgba(7, 12, 24, 0.985));
+    box-shadow: 0 24px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+    z-index: 999;
+    pointer-events: none;
+}
+
+.tooltip-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.tooltip-icon,
+.tooltip-icons {
+    flex: 0 0 auto;
+}
+
+.tooltip-icon img,
+.tooltip-icons img {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.04);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.24);
+}
+
+.tooltip-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 108px;
+}
+
+.tooltip-meta {
+    min-width: 0;
+    flex: 1;
+}
+
+.tooltip-title {
+    margin: 0 0 6px;
+    font-size: 1.06rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.tooltip-desc {
+    margin: 0;
+    color: #8dd8ff;
+    line-height: 1.5;
+}
+
+.tooltip-sections {
+    display: grid;
+    gap: 10px;
+}
+
+.tooltip-section {
+    padding: 10px 12px;
+    border: 1px solid rgba(142, 197, 255, 0.12);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(18, 31, 58, 0.40), rgba(10, 18, 34, 0.50));
+}
+
+.tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #dce8ff;
+    font-weight: 700;
+}
+
+.tooltip-header::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    box-shadow: 0 0 8px rgba(103, 232, 249, 0.35);
+}
+
+.tooltip-entry {
+    margin: 0;
+    color: #c4d1ea;
+    line-height: 1.5;
+}
+
+.tooltip-entry + .tooltip-entry {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.source-tag {
+    color: #000000 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    margin-right: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #08111e;
+    background: #8ec5ff;
+}
+
+.source-tag.pve { background: #57d7cf; }
+.source-tag.pvp { background: #ff8b8b; }
+.source-tag.alliance { background: #ffbe78; }
+.source-tag.bftp { background: #ffe382; }
+.source-tag.nexus { background: #d5ccff; }
+
+.tooltip b {
+    color: #fff6cf;
+}
+
+h2 { display: none; }
+
+
+
+.header-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1.1;
+}
+
+.header-label img {
+    width: 43px;
+    height: 43px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
+
+@media (max-width: 720px) {
+    body { padding: 18px 10px 28px; }
+    .page-shell { padding: 18px; border-radius: 16px; }
+    .page-header h1 { font-size: 1.6rem; }
+    .page-header p { font-size: 0.95rem; white-space: normal; }
+    th, td { padding: 12px 10px; }
+    .item { min-width: 240px; gap: 10px; }
+    .item img { width: 34px; height: 34px; }
+    .amount-bar { max-width: 76px; }
+    .tooltip { width: min(94vw, 520px); padding: 16px; }
+    .tooltip-top { gap: 12px; }
+    .tooltip-icon img, .tooltip-icons img { width: 40px; height: 40px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-shell">
+<header class="page-header">
+    <h1>Visionmaker Crafting Materials</h1>
+    <p>Materials needed for crafting Visionmaker. Hover over items to view extra details and source information.</p>
+</header>
+  <div class="table-wrap">
+    <table>
+<tr>
+<th>Materials</th>
+<th><div class="header-label"><img src="icons/VisionmakerWeapon.png" alt="Weapon"><span>Weapon</span></div></th>
+<th><div class="header-label"><img src="icons/VisionmakerChest.png" alt="Chest"><span>Chest</span></div></th>
+<th><div class="header-label"><img src="icons/VisionmakerGloves.png" alt="Gloves"><span>Gloves</span></div></th>
+<th><div class="header-label"><img src="icons/VisionmakerBoots.png" alt="Boots"><span>Boots</span></div></th>
+<th><div class="header-label"><span>Total</span></div></th>
+</tr>
+
+<!-- Design -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/DesignWeapon.png" alt="Visionmaker Design">
+<span>Visionmaker Design</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icons">
+      <img src="icons/DesignWeapon.png" alt="Weapon Design">
+      <img src="icons/DesignChest.png" alt="Chest Design">
+      <img src="icons/DesignGloves.png" alt="Gloves Design">
+      <img src="icons/DesignBoots.png" alt="Boots Design">
+    </div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Visionmaker Design</div>
+      <p class="tooltip-desc">Use this design to learn the corresponding Visionmaker crafting skill.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Weapon</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span>Manaya’s Core (Normal) – Rare drop</div>
+      <div class="tooltip-entry"><span class="source-tag alliance">Alliance</span><i>Clarag/Durim/Kaigor</i>, Noctenium Society Reputation Merchant (Alliance Territory, Forts): <b>25,000 Noctenium Society credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Noctenium Society Coupons: <b>25 BFTP Coupons/Tokens each</b> (with Elite)</div>
+    </div>
+    <div class="tooltip-section">
+      <div class="tooltip-header">Chest / Gloves / Boots</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span>Argon Corpus (Hard) – Rare drop</div>
+      <div class="tooltip-entry"><span class="source-tag alliance">Alliance</span>Noctenium Society (Alliance) Vendor: <b>15,000 Noctenium Society credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Noctenium Society Coupons: <b>15 BFTP Coupons/Tokens each</b> (with Elite)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>4</span></div></div></td>
+</tr>
+
+<!-- Fanesteel -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/Fanesteel.png" alt="Fanesteel">
+<span>Fanesteel</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/Fanesteel.png" alt="Fanesteel"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Fanesteel</div>
+      <p class="tooltip-desc">Dropped material used to craft Visionmaker weapons.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Source</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span>Fane of Kaprima (Hard)</div>
+    </div>
+    <div class="tooltip-section">
+      <div class="tooltip-header">Purchase Options</div>
+      <div class="tooltip-entry"><span class="source-tag pvp">PVP</span><i>Juleor</i>, Killing Spree Quartermaster (Velika, Valkyon Federation Headquarters): <b>150 Killing Spree credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Bellicarium Coupons: <b>1 BFTP Token = 4x Bindings</b> (with Elite)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>500</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-empty">-</div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-empty">-</div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-empty">-</div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>500</span></div></div></td>
+</tr>
+
+<!-- Dream Bindings -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/DreamBindings.png" alt="Dream Bindings">
+<span>Dream Bindings</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/DreamBindings.png" alt="Dream Bindings"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Dream Bindings</div>
+      <p class="tooltip-desc">Dropped material used to craft Visionmaker armor.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Source</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span>Balder’s Temple (Hard)</div>
+    </div>
+    <div class="tooltip-section">
+      <div class="tooltip-header">Purchase Options</div>
+      <div class="tooltip-entry"><span class="source-tag pvp">PVP</span><i>Surah</i>, Bellicarium Quartermaster (Velika, Valkyon Federation Headquarters): <b>100 Bellicarium credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Bellicarium Coupons: <b>1 BFTP Token = 8x Bindings</b> (with Elite)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-empty">-</div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 50%;"><div class="amount-bar-fill"></div><span>400</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 25%;"><div class="amount-bar-fill"></div><span>200</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 25%;"><div class="amount-bar-fill"></div><span>200</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>800</span></div></div></td>
+</tr>
+
+<!-- Pristine Phoenix Beak -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/PristinePhoenixBeak.png" alt="Pristine Phoenix Beak">
+<span>Pristine Phoenix Beak</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/PristinePhoenixBeak.png" alt="Pristine Phoenix Beak"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Pristine Phoenix Beak</div>
+      <p class="tooltip-desc">A rare trophy taken from Kelsaik, still crackling with fire.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Dropped By</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span><i>Nightmare Kelsaik</i>, Kelsaik’s Nest (Hard)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 42.86%;"><div class="amount-bar-fill"></div><span>9</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 28.57%;"><div class="amount-bar-fill"></div><span>6</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>3</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>3</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>21</span></div></div></td>
+</tr>
+
+<!-- Shandra's Quill -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ShandrasQuill.png" alt="Shandra’s Quill">
+<span>Shandra’s Quill</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/ShandrasQuill.png" alt="Shandra’s Quill"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Shandra’s Quill</div>
+      <p class="tooltip-desc">A feather-like fragment dropped by Shandra Manaya and used in Visionmaker crafting.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Dropped By</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span><i>Nightmare Shandra Manaya</i>, Manaya’s Core (Hard)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 42.86%;"><div class="amount-bar-fill"></div><span>3</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 28.57%;"><div class="amount-bar-fill"></div><span>2</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>7</span></div></div></td>
+</tr>
+
+<!-- Kaelic Spark -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/KaelicSpark.png" alt="Kaelic Spark">
+<span>Kaelic Spark</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/KaelicSpark.png" alt="Kaelic Spark"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Kaelic Spark</div>
+      <p class="tooltip-desc">A gathered resource from Val Kaeli used to craft Visionmaker equipment.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Gathered From</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span>Gathering Nodes – Rare drop</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 42.86%;"><div class="amount-bar-fill"></div><span>3</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 28.57%;"><div class="amount-bar-fill"></div><span>2</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>7</span></div></div></td>
+</tr>
+
+<!-- Cyasmic Oil -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/CyasmicOil.png" alt="Cyasmic Oil">
+<span>Cyasmic Oil</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/CyasmicOil.png" alt="Cyasmic Oil"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Cyasmic Oil</div>
+      <p class="tooltip-desc">An Invalesco merchant material used in Visionmaker crafting.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Purchase Options</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span><i>Provelle</i>, Invalesco Merchant (Pathfinder Post): <b>425 Invalesco credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Invalesco Coupons: <b>2 BFTP Coupons/Tokens each</b> (with Elite)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 40%;"><div class="amount-bar-fill"></div><span>2</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 20%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 20%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 20%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>5</span></div></div></td>
+</tr>
+
+<!-- Argon Vitriol -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ArgonVitriol.png" alt="Argon Vitriol">
+<span>Argon Vitriol</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/ArgonVitriol.png" alt="Argon Vitriol"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Argon Vitriol</div>
+      <p class="tooltip-desc">A durable drop from Argonea and Granarkus bosses used in Visionmaker crafting.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Dropped By</div>
+      <div class="tooltip-entry"><span class="source-tag pve">PVE</span>Level 60 BAMs (Argonea, Granarkus)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 42.86%;"><div class="amount-bar-fill"></div><span>3</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 28.57%;"><div class="amount-bar-fill"></div><span>2</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>7</span></div></div></td>
+</tr>
+
+<!-- Chaos Block -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/ChaosBlock.png" alt="Chaos Block">
+<span>Chaos Block</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/ChaosBlock.png" alt="Chaos Block"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Chaos Block</div>
+      <p class="tooltip-desc">An Agnitor-purchased material infused with chaotic nexus energy.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Purchase Options</div>
+      <div class="tooltip-entry"><span class="source-tag nexus">Nexus</span><i>Eriale</i>, Agnitor Merchant (Zulfikar Fortress): <b>20,000 Agnitor credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Agnitor Coupons: <b>7 BFTP Coupons/Tokens each</b> (with Elite)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 40%;"><div class="amount-bar-fill"></div><span>2</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 20%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 20%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 20%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>5</span></div></div></td>
+</tr>
+
+<!-- Victor's Trophy -->
+<tr>
+<td>
+<div class="item tooltip-trigger">
+<img src="icons/VictorsTrophy.png" alt="Victor’s Trophy">
+<span>Victor’s Trophy</span>
+<div class="tooltip">
+  <div class="tooltip-top">
+    <div class="tooltip-icon"><img src="icons/VictorsTrophy.png" alt="Victor’s Trophy"></div>
+    <div class="tooltip-meta">
+      <div class="tooltip-title">Victor’s Trophy</div>
+      <p class="tooltip-desc">A shared high-value crafting material used for Visionmaker and Nightforge equipment.</p>
+    </div>
+  </div>
+  <div class="tooltip-sections">
+    <div class="tooltip-section">
+      <div class="tooltip-header">Purchase Options</div>
+      <div class="tooltip-entry"><span class="source-tag pvp">PVP</span><i>Surah</i>, Bellicarium Quartermaster (Velika, Valkyon Federation Headquarters): <b>25,000 Bellicarium credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag pvp">PVP</span><i>Juleor</i>, Killing Spree Quartermaster (Velika, Valkyon Federation Headquarters): <b>25,000 Killing Spree credits each</b></div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Bellicarium Coupons: <b>32 BFTP Coupons/Tokens each</b> (with Elite)</div>
+      <div class="tooltip-entry"><span class="source-tag bftp">BFTP</span>Killing Spree Coupons: <b>42 BFTP Coupons/Tokens each</b> (with Elite)</div>
+    </div>
+  </div>
+</div>
+</div>
+</td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 42.86%;"><div class="amount-bar-fill"></div><span>3</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 28.57%;"><div class="amount-bar-fill"></div><span>2</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar" style="--fill: 14.29%;"><div class="amount-bar-fill"></div><span>1</span></div></div></td>
+<td class="amount-cell"><div class="amount-visual"><div class="amount-bar total" style="--fill: 100%;"><div class="amount-bar-fill"></div><span>7</span></div></div></td>
+</tr>
+
+</table>
+  </div>
+</div>
+
+<script>
+const triggers = document.querySelectorAll('.tooltip-trigger');
+triggers.forEach(trigger => {
+  const tooltip = trigger.querySelector('.tooltip');
+  trigger.addEventListener('mouseenter', () => { tooltip.style.display = 'block'; });
+  trigger.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+  trigger.addEventListener('mousemove', (e) => {
+    const offset = 16;
+    const tooltipWidth = tooltip.offsetWidth || 560;
+    const tooltipHeight = tooltip.offsetHeight || 220;
+    let left = e.pageX + offset;
+    let top = e.pageY + offset;
+
+    if (left + tooltipWidth > window.scrollX + window.innerWidth - 12) {
+      left = e.pageX - tooltipWidth - offset;
+    }
+    if (top + tooltipHeight > window.scrollY + window.innerHeight - 12) {
+      top = e.pageY - tooltipHeight - offset;
+    }
+
+    tooltip.style.left = Math.max(window.scrollX + 8, left) + 'px';
+    tooltip.style.top = Math.max(window.scrollY + 8, top) + 'px';
+  });
+});
+</script>
+</body>
+</html>
